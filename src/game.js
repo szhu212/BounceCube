@@ -32,8 +32,6 @@ export default class Game {
         this.time = 0;
         this.level = new Level(this.dimensions);
         this.player = new Player(this.dimensions, this.keysTracker, this.level);
-        // this.level.drawLevel(this.ctx);
-        // this.ctx.s ∫œave();
         this.animate();
         // debugger
     }
@@ -51,9 +49,7 @@ export default class Game {
 
     keyUpHandler(e) {
         // debugger
-        // console.log("before handler")
         this.keysTracker[e.keyCode] = false;
-        // console.log("after handler")
     }
     
     registerEvents() {
@@ -74,7 +70,7 @@ export default class Game {
     }
 
     animate() {
-        this.player.animate(this.ctx, this.keysTracker)
+        this.player.animate(this.ctx)
         this.level.animate(this.ctx)
         // debugger
         if (this.moving) {

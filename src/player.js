@@ -28,6 +28,8 @@ export default class Player {
         this.keysTracker = keysTracker;
         this.level = level;
         this.onGround = false;
+        this.collisionAdj = 0;
+        // this._overlapDir = this._overlapDir.bind(this)
     }
 
 
@@ -41,9 +43,12 @@ export default class Player {
         // debugger
         if (keysTracker[KEYS.UP]){
             // debugger
+            // if (this.bottomCollision === true){
+            //     this.collisionDir2()
+            // }
             this.onGround = false;
             this.velY -= 1 * CONSTANTS.UP_SPEED 
-            console.log(this.velY)
+            // console.log(this.velY)
         }
         if (keysTracker[KEYS.LEFT]) {  
             // debugger          
@@ -54,7 +59,8 @@ export default class Player {
         }
     }
 
-    updatePlayer(keysTracker) {
+    updatePlayer() {
+        this.onGround = false;
     // debugger
     // this.x += this.velX
     // this.y += this.velY 
@@ -84,8 +90,12 @@ export default class Player {
             this.resolveCollision()
         }
 
+        // if (this.keysTracker[KEYS.UP]){
+        //     // debugger
+        //     this.onGround = false;}
+
         if(this.onGround) {
-            this.velocityY = 0;
+            this.velY = 0;
           }
         this.x += this.velX
         this.y += this.velY
@@ -112,8 +122,8 @@ export default class Player {
         }
     }
 
-    animate(ctx, keysTracker) {
-        this.updatePlayer(keysTracker);
+    animate(ctx) {
+        this.updatePlayer();
         this.drawPlayer(ctx);
     }
 
@@ -135,54 +145,125 @@ export default class Player {
                 collision = true;
             }
         })
+        // console.log(collision)
         return collision;
     }
 
-    collisionDir(){
-        let collisionType = [null, null];
-        if(!this.collideWithBrick()){return collisionType}
+    // collisionDir(){
+    //     let collisionType = [null, null];
+    //     if(!this.collideWithBrick()){return collisionType}
 
+    //     const _overlapDir = (rect1, rect2) => {
+    //         if (rect1.right >= rect2.left && rect1.right <= (rect2.left + rect2.right)/2){
+    //             collisionType[0] ="left"
+    //         } else if (rect1.left <= rect2.right && rect1.left <= (rect2.left + rect2.right)/2){
+    //             collisionType[0] = "right"
+    //         }
+    //         if(rect1.bottom <= rect2.top && rect1.bottom >= (rect2.top + rect2.bottom)/2){
+    //             collisionType[1] = "top"
+    //         } else if (rect1.top <= rect2.bottom && rect1.top <= (rect2.top + rect2.bottom)/2) {
+    //             collisionType[1] = "bottom"
+    //         }
+    //     }
+
+    //     this.level.bricks.forEach(brick => {
+    //         _overlapDir(this.bounds(), brick)
+    //     })
+    //     console.log(collisionType)
+    //     return collisionType;
+    // }
+
+    collisionDir2(){
+        let collisionDir = [null, null]
         const _overlapDir = (rect1, rect2) => {
-            if (rect1.right >= rect2.left && rect1.right <= (rect2.left + rect2.right)/2){
-                collisionType[0] ="left"
-            } else if (rect1.left <= rect2.right && rect1.left <= (rect2.left + rect2.right)/2){
-                collisionType[0] = "right"
-            }
-            if(rect1.bottom >= rect2.top && rect1.bottom >= (rect2.top + rect2.bottom)/2){
-                collisionType[1] = "top"
-            } else if (rect1.top <= rect2.bottom && rect1.top <= (rect2.top + rect2.bottom)/2) {
-                collisionType[1] = "bottom"
+            const width1 = rect1.right - rect1.left
+            const width2 = rect2.right - rect2.left
+            const height1 = rect1.bottom - rect1.top
+            const height2 = rect2.bottom - rect2.top
+            const centerDistX = (rect1.left + rect1.right)/2 - (rect2.left + rect2.right)/2
+            const centerDistY = (rect1.bottom + rect1.top)/2 - (rect2.bottom + rect2.top)/2
+            const avrWidth = (width1 + width2)/2
+            const avrHeight = (height1 + height2)/2
+            const distX = avrWidth - Math.abs(centerDistX)
+            const distY = avrHeight - Math.abs(centerDistY)
+
+           
+            if (Math.abs(centerDistX) < avrWidth && Math.abs(centerDistY) < avrHeight){
+                if (distX >= distY){
+                    if (centerDistY > 0){
+                        collisionDir[1] = "top";
+                        this.collisionAdj = distY
+                    }
+                    else {
+                        collisionDir[1] = "bottom";
+                        rect1.y -= distY;
+                        console.log("start")
+                        console.log(rect1.y)
+                        this.collisionAdj = -distY
+                    }
+                }
+                else {
+                    if(centerDistX < 0){
+                        collisionDir[0] = "right";
+                        this.collisionAdj = -distX
+                    } else {
+                        collisionDir[0] = "left";
+                        this.collisionAdj = distX
+                    }
+                }
             }
         }
-
         this.level.bricks.forEach(brick => {
             _overlapDir(this.bounds(), brick)
         })
-        return collisionType;
+        console.log(collisionDir)
+        return collisionDir
     }
 
     resolveCollision(){
         // let collisionType = ""
+        console.log(this.collisionDir2())
         if (this.collideWithBrick()){
-            // collisionType = this.collisionDir()
-            // debugger
-            // // console.log(collisionType)
-            // console.log(this.collisionDir())
-            // console.log(this.collideWithBrick())
-            // console.log(this.collideWithBrick()[0])
-            // console.log(this.collideWithBrick()[1])
-            if (this.collisionDir() && (this.collisionDir()[0] === "left" || this.collisionDir()[0] === "right")){
-                this.velX *= -1
+            
+
+            if (this.collisionDir2()[0] === "right"){
+                this.x += this.collisionAdj
+                if(this.velX !== 0) {
+                    this.velX *= -1
+                } else {
+                    this.velX = 0.1
+                }
                 // console.log(this.velX)
             }
-            else if (this.collisionDir() && this.collisionDir()[1] === "top"){
+
+            if (this.collisionDir2()[0] === "left"){
+                this.x += this.collisionAdj
+                if(this.velX !== 0) {
+                    this.velX *= -1
+                } else {
+                    this.velX = -0.1
+                }
+                console.log(this.collisionDir2())
+            }
+            if (this.collisionDir2()[1] === "top"){
+                this.y += this.collisionAdj
                 this.velY *= -1
-                console.log(this.velY)
+                // console.log("a")
+                // console.log(this.velY)
+                // // console.log(this.onGround)
+                // console.log(this.collisionDir())
+                // console.log(this.collideWithBrick())
             }
-            else if (this.collisionDir() && this.collisionDir()[1] === "bottom"){
+            if (this.collisionDir2()[1] === "bottom"){
+                this.y += this.collisionAdj
                 this.onGround = true;
-                console.log(this.velY)
+                this.bottomCollision = true;
+                // console.log("b")
+                console.log(this.y)
+                console.log(this.onGround)
+                // console.log(this.collideWithBrick()[1])
             }
+            this.collisionAdj = 0
         }
 
     }
