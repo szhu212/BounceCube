@@ -1,4 +1,6 @@
-export const LEVEL1 = [[1,1,1,1],[0,0,0,0],[0,0,0,0], [0,1,0,1]];
+import { myCount, _overlap } from "./util"
+
+export const LEVEL1 = [[1,1,1,1,0],[0,0,0,0,0],[0,2,0,0,0],[0,0,0,0,2], [2,2,1,0,1]];
 
 
 
@@ -9,68 +11,56 @@ export default class Level {
         this.dimensions = dimensions;
         this.level = LEVEL1;
         this.bricks = [];
+        this.targetLength = 10;
+        this.targets = [];
+        this.numTargets = 0;
+  
     };
-
-    countBricks(){
-        let count = 0
-        for(let row = 0; row < this.level.length; row ++){
-            for(let col= 0; col < this.level[0].length; col++){
-                if (this.level[row][col] === 1){
-                    count += 1
-                }
-            }
-        }
-        return count
-    }
  
-    drawLevel(ctx) {
+    drawLevel(ctx, player) {
         const wallWidth = this.dimensions.width / this.level[0].length
         const wallHeight = this.dimensions.height / this.level.length
-        let numBricks = this.countBricks()
         // debugger
-        // const coloredBricks = []
-        // this.level.forEach((row, rowIdx) => {
-        //     row.forEach((brick, columnIdx) => {
-        //         let verticalIdx = this.level.indexOf(row)
-        //         // debugger
-        //         let leftStart = columnIdx * wallWidth
-        //         let upStart = verticalIdx * WallHeight
-        //         // debugger
-        //         if (brick === 1){
-        //         this.fillStyle = "black";
-        //         debugger
-        //         ctx.fillRect(leftStart, upStart, wallWidth, WallHeight)
-        //         debugger
-        //         }
-        //     })
-        // })
+        let numBricks = myCount(this.level.flat(), 1)
+        this.numTargets = myCount(this.level.flat(), 2)
         for(let row = 0; row < this.level.length; row ++){
             for(let col= 0; col < this.level[0].length; col++){
                 let leftStart = col * wallWidth;
                 let upStart = row * wallHeight
                 if(this.level[row][col] === 1){
                     // debugger
-                    this.fillStyle = "black";
+                    ctx.fillStyle = "black";
                     ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
                     this.bricks.push({left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)})
                     if (this.bricks.length > numBricks){
                         this.bricks = this.bricks.slice(1)
                     }
-                    
+                }
+                else if(this.level[row][col] === 2){
                     // debugger
+        
+                    ctx.fillStyle = "yellow";
+                    ctx.fillRect(leftStart, upStart, this.targetLength, this.targetLength)
+                    let currentTarget = {left : leftStart, top:upStart, right : (leftStart + this.targetLength), bottom : (upStart + this.targetLength)}
+                    if(_overlap(player.bounds(), currentTarget)){
+                        this.level[row][col] = 0
+                    }
                 }
             }
         }
-
         // debugger
     }
 
-    // collidesWithBrick(player){
+    drawBackground(ctx){
+        ctx.fillStyle = "skyblue";
+        ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
+    }
 
-    // }
-
-    animate(ctx) {
-        this.drawLevel(ctx)
+    animate(ctx, player) {
+        this.drawBackground(ctx);
+        this.drawLevel(ctx, player);
+        // console.log(this.numTargets)
+      
     }
    
 

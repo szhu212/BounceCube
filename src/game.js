@@ -55,23 +55,21 @@ export default class Game {
     registerEvents() {
         this.keyDownHandler = this.keyDownHandler.bind(this);
         this.keyUpHandler = this.keyUpHandler.bind(this);
-        // debugger
         document.addEventListener('keydown', (e) => {
-            // debugger
-            // console.log("down")
             this.keyDownHandler(e)
         });
         document.addEventListener('keyup', (e) => {
-            // debugger
             this.keyUpHandler(e)
-            // console.log("up")
         });
-        // debugger
     }
 
+
     animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        this.level.animate(this.ctx, this.player)
         this.player.animate(this.ctx)
-        this.level.animate(this.ctx)
+        this.numTargets = this.level.numTargets
+        console.log(this.numTargets)
         // debugger
         if (this.moving) {
             requestAnimationFrame(this.animate.bind(this))
