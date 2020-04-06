@@ -1,20 +1,16 @@
 import { myCount, _overlap } from "./util"
-
-export const LEVEL1 = [[1,1,1,1,1,0,0],[0,0,0,0,0,0,0],[0,0,2,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[1,1,0,0,2,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,2,0,0,0,0,0],[2,0,1,1,1,0,0]];
-
-
-
+import { LEVELS} from "./util"
 
 export default class Level {
 
-    constructor(dimensions){
+    constructor(dimensions, currentLevel){
         this.dimensions = dimensions;
-        this.level = LEVEL1;
+        this.level = LEVELS[currentLevel];
         this.bricks = [];
         this.targetLength = 10;
         this.targets = [];
         this.numTargets = 0;
-  
+        // debugger
     };
  
     drawLevel(ctx, player) {

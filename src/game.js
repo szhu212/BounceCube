@@ -7,15 +7,11 @@ export default class Game {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas
         this.dimensions = { width: canvas.width, height: canvas.height };
-        // this.width = canvas.width;
-        // this.height = canvas.height;
         this.keysTracker = {};
         this.moving = false;
-        // this.level = LEVEL1;
-        // this.bricks = [];
-       
+        this.currentLevel = 0      
         this.registerEvents();
-        this.restart();
+        this.restart(this.currentLevel);
         // debugger
     }
 
@@ -27,11 +23,12 @@ export default class Game {
         {this.animate()};
       }
 
-    restart() {
+    restart(currentLevel) {
         this.moving = false;
         this.time = 0;
-        this.level = new Level(this.dimensions);
+        this.level = new Level(this.dimensions, currentLevel);
         this.player = new Player(this.dimensions, this.keysTracker, this.level);
+        this.numTargets = 1
         this.animate();
         // debugger
     }
@@ -70,7 +67,12 @@ export default class Game {
         this.player.animate(this.ctx)
         this.numTargets = this.level.numTargets
         console.log(this.numTargets)
+        console.log(this.currentLevel)
         // debugger
+        if (this.numTargets === 0) {
+            this.currentLevel += 1
+            this.restart(this.currentLevel)
+        }
         if (this.moving) {
             requestAnimationFrame(this.animate.bind(this))
         }
