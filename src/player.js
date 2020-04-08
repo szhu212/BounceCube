@@ -4,8 +4,8 @@ export default class Player {
 
     constructor(dimensions, keysTracker = {}, level) {
         this.dimensions = dimensions;
-        this.x = 0;
-        this.y = this.dimensions.height - CONSTANTS.EDGE;
+        this.x = CONSTANTS.BOARDER_WIDTH;
+        this.y = this.dimensions.height - CONSTANTS.EDGE //- CONSTANTS.BOARDER_WIDTH;
         this.velX = 0;
         this.velY = 0; 
         this.keysTracker = keysTracker;
@@ -16,7 +16,7 @@ export default class Player {
 
 
     drawPlayer(ctx) {
-        ctx.fillStyle = "#FF0000";
+        ctx.fillStyle = `rgb(${this.level.color})`;
         ctx.fillRect(this.x, this.y, CONSTANTS.PLAYER_WIDTH, CONSTANTS.PLAYER_HEIGHT);
     }
 
@@ -25,7 +25,6 @@ export default class Player {
         if (keysTracker[KEYS.UP]){
             this.onGround = false;
             this.velY -= 1 * CONSTANTS.UP_SPEED 
-            // console.log(this.velY)
         }
         if (keysTracker[KEYS.LEFT]) {  
             // debugger          
@@ -48,9 +47,6 @@ export default class Player {
     } else {
         this.velY += CONSTANTS.AIR_FRICTION
     }
-    // console.log("start")
-    // console.log(this.y)
-    // console.log(this.velY)
 
     // debugger    
     if(Math.abs(this.velX) > CONSTANTS.MAX_SPEED){
@@ -79,16 +75,21 @@ export default class Player {
         this.x += this.velX
         this.y += this.velY
 
-        if (this.x > this.dimensions.width - CONSTANTS.EDGE) {
-            this.x = this.dimensions.width - CONSTANTS.EDGE
+        if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {
+            this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
         }  else if (this.x < 0) {
-            this.x = 0
+            this.x = CONSTANTS.BOARDER_WIDTH
         }
-        if (this.y > this.dimensions.height - CONSTANTS.EDGE) {
-            this.y = this.dimensions.height - CONSTANTS.EDGE
-        }  else if (this.y < CONSTANTS.EDGE) {
-            this.y = CONSTANTS.EDGE
+        if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT - CONSTANTS.BOARDER_WIDTH) {
+            this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT- CONSTANTS.BOARDER_WIDTH
+        }  else if (this.y < CONSTANTS.BOARDER_WIDTH) {
+            this.y = CONSTANTS.BOARDER_WIDTH
         }
+        // console.log(this.x, this.y)
+        // console.log(CONSTANTS.BOARDER_WIDTH)
+        // console.log(CONSTANTS.EDGE)
+        // console.log(this.dimensions.height - CONSTANTS.EDGE - CONSTANTS.BOARDER_WIDTH)
+        // debugger
         
     }
 
@@ -114,7 +115,6 @@ export default class Player {
                 collision = true;
             }
         })
-        // console.log(collision)
         return collision;
     }
 
@@ -185,12 +185,12 @@ export default class Player {
         this.level.bricks.forEach(brick => {
             _overlapDir(this.bounds(), brick)
         })
-        console.log(collisionDir)
+        // console.log(collisionDir)
         return collisionDir
     }
 
     resolveCollision(){
-        console.log(this.collisionDir())
+        // console.log(this.collisionDir())
         if (this.collideWithBrick()){
             if (this.collisionDir()[0] === "right"){
                 this.x += this.collisionAdj
@@ -208,26 +208,18 @@ export default class Player {
                 } else {
                     this.velX = -0.1
                 }
-                // console.log(this.collisionDir())
             }
             if (this.collisionDir()[1] === "top"){
                 this.y += this.collisionAdj
                 this.velY *= -1
-                // console.log("a")
-                // console.log(this.velY)
-                // // console.log(this.onGround)
-                // console.log(this.collisionDir())
-                // console.log(this.collideWithBrick())
+            
             }
             if (this.collisionDir()[1] === "bottom"){
                 this.y += this.collisionAdj
                 // this.onGround = true;
                 this.velY *= -1
                 this.bottomCollision = true;
-                // console.log("b")
-                // console.log(this.y)
-                // console.log(this.onGround)
-                // console.log(this.collideWithBrick()[1])
+
             }
             this.collisionAdj = 0
         }
