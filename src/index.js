@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // }
     
     const canvas = document.getElementById("game-canvas");
-    const ctx = canvas.getContext("2d");
+    // const ctx = canvas.getContext("2d");
     // const dimensions = { width: canvas.width, height: canvas.height };
     // debugger
     // const currentPlayer = new Player(dimensions, keysTracker)

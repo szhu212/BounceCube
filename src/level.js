@@ -28,8 +28,18 @@ export default class Level {
                 
                 if(this.level[row][col] === 1){
                     // debugger
-                    ctx.fillStyle = "black";
-                    ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
+                    // const image = document.getElementById('ice-image');
+                    const image = new Image();
+                    image.src = './assets/brick.png';
+                    // debugger
+                    // image.addEventListener('load', e => {
+                    image.onload = function () {
+                        ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
+                    }
+                    ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
+                    //   });
+                    // ctx.fillStyle = "black";
+                    // ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
                     this.bricks.push({left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)})
                     if (this.bricks.length > numBricks){
                         this.bricks = this.bricks.slice(1)
@@ -85,8 +95,9 @@ export default class Level {
                         // debugger
                         this.level[row][col] = 0
                         this.color = currentTarget.color
+                        const gamePage = document.getElementById('game-page')
+                        gamePage.style.backgroundColor = `rgba(${this.color}, 0.6)`
                     }
-                    // console.log(this.targets)
                 }
             }
         }
@@ -95,16 +106,12 @@ export default class Level {
 
     drawBackground(ctx){
         // debugger
-        ctx.fillStyle = `rgba(${this.color}, 0.2)`;
+        ctx.fillStyle = "rgba(255,255,255,0.4)"
         ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
+        // ctx.fillStyle = `rgba(${this.color}, 0.2)`;
+        // ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
         
     }
-
-    drawBorder(ctx){
-        ctx.strokeStyle = 'black'
-        ctx.lineWidth = 3
-        ctx.strokeRect(0,0, this.dimensions.width, this.dimensions.height)
-    } 
 
     randomColor(){
         let num = Math.floor(Math.random() * 15)
@@ -113,9 +120,7 @@ export default class Level {
 
     animate(ctx, player) {
         this.drawBackground(ctx);
-        this.drawLevel(ctx, player);
-        this.drawBorder(ctx)
-      
+        this.drawLevel(ctx, player);    
     }
    
 

@@ -9,7 +9,7 @@ export const CONSTANTS = {
     HORIZENTAL_SPEED: 3,
     MAX_SPEED: 9,
     EDGE: 10,
-    BOARDER_WIDTH : 3
+    BOARDER_WIDTH : 0
 }
 
 export const KEYS = {

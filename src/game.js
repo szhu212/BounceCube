@@ -69,7 +69,7 @@ export default class Game {
     drawTimer(){
         const timer = Math.floor(Date.now() - this.startTime)/1000
         this.ctx.font = '20px Arial'
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        this.ctx.fillStyle = 'rgb(255, 255, 255)';
         this.ctx.fillText(`${timer}`, this.canvas.width -60, 30)
     }
 
@@ -131,9 +131,9 @@ export default class Game {
             this.ctx.save()
             this.ctx.font = '20px Arial'
              this.ctx.fillStyle = 'rgba(255,255,255,0.7)';
-             this.ctx.shadowColor = 'rgba(0,0,0,0.5)'
+             this.ctx.shadowColor = 'rgba(0,0,0,0.7)'
              this.ctx.shadowBlur = 5
-            this.ctx.fillText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height / 2, this.canvas.width * 5 / 6)
+            this.ctx.fillText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
             this.ctx.restore();
         }
         if (this.textTimer > 0.5 && this.textTimer < 100 ){
