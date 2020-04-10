@@ -26,9 +26,9 @@ export default class Game {
       }
 
     restart(currentLevel) {
-        // if (!this.levelUp){
+        if (!this.levelUp){
             this.moving = false;
-        // }
+        }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
         this.level = new Level(this.dimensions, currentLevel);

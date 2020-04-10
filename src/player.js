@@ -23,7 +23,7 @@ export default class Player {
     pushPlayer(keysTracker){
         // debugger
         if (keysTracker[KEYS.UP]){
-            this.onGround = false;
+            // this.onGround = false;
             this.velY -= 1 * CONSTANTS.UP_SPEED 
         }
         if (keysTracker[KEYS.LEFT]) {  
@@ -36,7 +36,7 @@ export default class Player {
     }
 
     updatePlayer() {
-        this.onGround = false;           
+        // this.onGround = false;           
     // debugger
     this.velX *= CONSTANTS.FRICTION  
     if(this.y < 390){
@@ -47,7 +47,6 @@ export default class Player {
     } else {
         this.velY += CONSTANTS.AIR_FRICTION
     }
-
     // debugger    
     if(Math.abs(this.velX) > CONSTANTS.MAX_SPEED){
             if(this.velX > 0) {
@@ -69,9 +68,10 @@ export default class Player {
             this.resolveCollision()
         }
 
-        if(this.onGround) {
-            this.velY = 0;
-          }
+        // if(this.onGround) {
+        //     this.velY = 0;
+        // }
+
         this.x += this.velX
         this.y += this.velY
 
@@ -82,8 +82,8 @@ export default class Player {
         }
         if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT - CONSTANTS.BOARDER_WIDTH) {
             this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT- CONSTANTS.BOARDER_WIDTH
-        }  else if (this.y < CONSTANTS.BOARDER_WIDTH) {
-            this.y = CONSTANTS.BOARDER_WIDTH
+        }  else if (this.y < 0) {
+            this.y = 0
         }
         // console.log(this.x, this.y)
         // console.log(CONSTANTS.BOARDER_WIDTH)

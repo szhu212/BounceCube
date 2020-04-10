@@ -7,22 +7,29 @@
 </head>
 <body>
   <div id="game-page">
-    <div class="gradient-transition">
+    <div class="gradient-transition"></div>
       <h1>Bounce Cube</h1>
-      <div id="canvas-container">
-        <div id="gameover-box">
-          <div class="message-container">
-            <h2 id="you-won-message"> You Won!</h2>
-            <div id="gameover-messsage"></div>
-          </div>
-          <p class="new-game-instruction"> Press R to restart a game. </p>
+      <div class="game-section-holder">
+        <div class="side-bar">
+          
+
         </div>
-        <canvas id="game-canvas" height="400" width = "600"></canvas>
-      </div>
-      <div class="ice-image">
+        <div id="canvas-container">
+          <div id="gameover-box">
+            <div class="message-container">
+              <h2 id="you-won-message"> You Won!</h2>
+              <div id="gameover-messsage"></div>
+            </div>
+            <p class="new-game-instruction"> Press R to restart a game. </p>
+          </div>
+          <canvas id="game-canvas" height="400" width = "600"></canvas>
+        </div>
+    </div>
+      <div class="brick-image">
         <img id="brick-image" src="assets/brick.png"> 
       </div>
-     </div>
+   
+     
   </div>
 </body>
 </html>
