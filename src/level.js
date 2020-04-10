@@ -7,7 +7,8 @@ export default class Level {
         this.dimensions = dimensions;
         this.level = LEVELS[currentLevel];
         this.currentLevel = currentLevel;
-        this.bricks = [];
+        // this.bricks = [];
+        this.bricks = {};
         this.targetLength = 10;
         this.targets = {};
         this.numTargets = 0;
@@ -16,6 +17,7 @@ export default class Level {
     };
  
     drawLevel(ctx, player) {
+        
         const wallWidth = this.dimensions.width / this.level[0].length
         const wallHeight = this.dimensions.height / this.level.length
         // debugger
@@ -33,18 +35,15 @@ export default class Level {
                     const image = new Image();
                     image.src = './assets/brick.png';
                     // debugger
-                    // image.addEventListener('load', e => {
                     image.onload = function () {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
                     }
                     ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
-                    //   });
-                    // ctx.fillStyle = "black";
-                    // ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
-                    this.bricks.push({left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)})
-                    if (this.bricks.length > numBricks){
-                        this.bricks = this.bricks.slice(1)
-                    }
+                   this.bricks[[row, col]] = {left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)}
+                    // this.bricks.push({left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)})
+                    // if (this.bricks.length > numBricks){
+                    //     this.bricks = this.bricks.slice(1)
+                    // }
                     // ctx.save()
                 }
                 else if(this.level[row][col] === 2){
@@ -99,6 +98,7 @@ export default class Level {
                         const gamePage = document.getElementById('game-page')
                         // gamePage.style.transition = 'background-color 1s ease-in-out;'
                         gamePage.style.backgroundColor = `rgba(${this.color}, 0.6)`
+                        // console.log(this.bricks)
                     }
                 }
             }

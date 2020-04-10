@@ -1,13 +1,13 @@
 
 export const CONSTANTS = {
-    GRAVITY: 0.8,
+    GRAVITY: 0.3,
     FRICTION: 0.8,
-    AIR_FRICTION: 0.3,
+    AIR_FRICTION: 0.1,
     PLAYER_WIDTH: 15,
     PLAYER_HEIGHT: 15,
-    UP_SPEED: 6,
+    UP_SPEED: 4,
     HORIZENTAL_SPEED: 3,
-    MAX_SPEED: 9,
+    MAX_SPEED: 6,
     EDGE: 10,
     BOARDER_WIDTH : 0
 }

@@ -10,7 +10,7 @@ export default class Player {
         this.velY = 0; 
         this.keysTracker = keysTracker;
         this.level = level;
-        this.onGround = false;
+        // this.onGround = false;
         this.collisionAdj = 0;
     }
 
@@ -36,6 +36,8 @@ export default class Player {
     }
 
     updatePlayer() {
+        // console.log(this.x, this.y)
+        // console.log(this.velY)
         // this.onGround = false;           
     // debugger
     this.velX *= CONSTANTS.FRICTION  
@@ -80,12 +82,12 @@ export default class Player {
         }  else if (this.x < 0) {
             this.x = CONSTANTS.BOARDER_WIDTH
         }
-        if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT - CONSTANTS.BOARDER_WIDTH) {
-            this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT- CONSTANTS.BOARDER_WIDTH
-        }  else if (this.y < 0) {
+        if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT) {
+            this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT
+        }  
+        else if (this.y < 0) {
             this.y = 0
         }
-        // console.log(this.x, this.y)
         // console.log(CONSTANTS.BOARDER_WIDTH)
         // console.log(CONSTANTS.EDGE)
         // console.log(this.dimensions.height - CONSTANTS.EDGE - CONSTANTS.BOARDER_WIDTH)
@@ -110,11 +112,18 @@ export default class Player {
     collideWithBrick(){
         let collision = false;
         // debugger
-        this.level.bricks.forEach(brick => {
+
+        Object.values(this.level.bricks).forEach(
+            brick => {
             if (_overlap(brick, this.bounds())){
                 collision = true;
             }
-        })
+            })
+        // this.level.bricks.forEach(brick => {
+        //     if (_overlap(brick, this.bounds())){
+        //         collision = true;
+        //     }
+        // })
         return collision;
     }
 
@@ -182,9 +191,14 @@ export default class Player {
                 }
             }
         }
-        this.level.bricks.forEach(brick => {
+
+        Object.values(this.level.bricks).forEach(
+            brick => {
             _overlapDir(this.bounds(), brick)
         })
+        // this.level.bricks.forEach(brick => {
+        //     _overlapDir(this.bounds(), brick)
+        // })
         // console.log(collisionDir)
         return collisionDir
     }
