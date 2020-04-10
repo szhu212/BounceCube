@@ -25,6 +25,9 @@ export default class Player {
         if (keysTracker[KEYS.UP]){
             // this.onGround = false;
             this.velY -= 1 * CONSTANTS.UP_SPEED 
+            if (this.velY < -CONSTANTS.MAX_SPEED) {
+                this.velY = -CONSTANTS.MAX_SPEED
+            }
         }
         if (keysTracker[KEYS.LEFT]) {  
             // debugger          
@@ -37,7 +40,8 @@ export default class Player {
 
     updatePlayer() {
         // console.log(this.x, this.y)
-        // console.log(this.velY)
+        // console.log(`velY ${this.velY}`)
+        // console.log(`this.y ${this.y}`)
         // this.onGround = false;           
     // debugger
     this.velX *= CONSTANTS.FRICTION  
@@ -56,38 +60,38 @@ export default class Player {
             } else {
                 this.velX = - 1 * CONSTANTS.MAX_SPEED
             }
-        }
+    }
         
-        if(Math.abs(this.velY) > CONSTANTS.MAX_SPEED){
-            if(this.velY > 0) {
-                this.velY = CONSTANTS.MAX_SPEED
-            } else {
-                this.velY = -1 * CONSTANTS.MAX_SPEED
-            }
+    if(Math.abs(this.velY) > CONSTANTS.MAX_SPEED){
+        if(this.velY > 0) {
+            this.velY = CONSTANTS.MAX_SPEED
+        } else {
+            this.velY = -1 * CONSTANTS.MAX_SPEED
         }
+    }
 
-        if (this.collideWithBrick()){
-            this.resolveCollision()
-        }
+    if (this.collideWithBrick()){
+        this.resolveCollision()
+    }
 
         // if(this.onGround) {
         //     this.velY = 0;
         // }
 
-        this.x += this.velX
-        this.y += this.velY
+    this.x += this.velX
+    this.y += this.velY
 
-        if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {
-            this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
-        }  else if (this.x < 0) {
-            this.x = CONSTANTS.BOARDER_WIDTH
-        }
-        if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT) {
-            this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT
-        }  
-        else if (this.y < 0) {
-            this.y = 0
-        }
+    if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {
+        this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
+    }  else if (this.x < 0) {
+        this.x = CONSTANTS.BOARDER_WIDTH
+    }
+    if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT) {
+        this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT
+    }  
+    else if (this.y < 0) {
+        this.y = 0
+    }
         // console.log(CONSTANTS.BOARDER_WIDTH)
         // console.log(CONSTANTS.EDGE)
         // console.log(this.dimensions.height - CONSTANTS.EDGE - CONSTANTS.BOARDER_WIDTH)
