@@ -6,6 +6,7 @@ export default class Level {
     constructor(dimensions, currentLevel){
         this.dimensions = dimensions;
         this.level = LEVELS[currentLevel];
+        this.currentLevel = currentLevel;
         this.bricks = [];
         this.targetLength = 10;
         this.targets = {};
@@ -96,6 +97,7 @@ export default class Level {
                         this.level[row][col] = 0
                         this.color = currentTarget.color
                         const gamePage = document.getElementById('game-page')
+                        // gamePage.style.transition = 'background-color 1s ease-in-out;'
                         gamePage.style.backgroundColor = `rgba(${this.color}, 0.6)`
                     }
                 }

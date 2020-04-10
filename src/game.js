@@ -10,10 +10,11 @@ export default class Game {
         this.dimensions = { width: canvas.width, height: canvas.height };
         this.keysTracker = {};
         this.moving = false;
-        this.currentLevel = 0      
+        this.currentLevel = 0 
+        this.totalTarget = 0 
         this.registerEvents();
         this.restart(this.currentLevel);
-        // debugger
+        this.levelUp = false
     }
 
     play() {
@@ -25,18 +26,25 @@ export default class Game {
       }
 
     restart(currentLevel) {
-        this.moving = false;
+        // if (!this.levelUp){
+            this.moving = false;
+        // }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
         this.level = new Level(this.dimensions, currentLevel);
         this.player = new Player(this.dimensions, this.keysTracker, this.level);
         this.numTargets = 1
-        this.animate();
-        //    this.ctx.font = '38px VT323'
-        //    this.ctx.fillStyle = 'yellow';
-        //     this.ctx.fillText('Level Up!', this.canvas.width / 4, 40)
-        //    setTimeout(this.animate(), 2000)
-        // debugger
+        // console.log(this.gameover())
+        // console.log(this.currentLevel)
+        // console.log(this.currentLevel <= Object.keys(LEVELS).length)
+        if(this.gameover()){
+            // debugger
+            this.gameoverFrame()
+        } else {
+            this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length  
+            this.animate();
+            // cancelAnimationFrame(myReq)
+        }
     }
 
     keyDownHandler(e) {
@@ -67,76 +75,72 @@ export default class Game {
     }
 
     drawTimer(){
-        const timer = Math.floor(Date.now() - this.startTime)/1000
-        this.ctx.font = '20px Arial'
+        this.timer = Math.floor(Date.now() - this.startTime)/1000
+        if (this.textTimer === 0 && this.currentLevel === 0){this.timer = 0}
+        this.ctx.font = '20px Dosis'
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillText(`${timer}`, this.canvas.width -60, 30)
+        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20)
     }
 
+    drawCounter(){
+        let counterText = `${this.numTargets}/${this.totalTarget}`
+        this.ctx.font = '20px Dosis'
+        this.ctx.fillStyle = 'rgb(255, 255, 255)';
+        this.ctx.fillText(counterText, this.canvas.width -60, 50)
+     }
+
     animate() {
-        // console.log(this.textTimer)
+        // console.log(Date.now())
+        this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.level.animate(this.ctx, this.player)
+    
         this.player.animate(this.ctx)
         this.numTargets = this.level.numTargets
         this.drawTimer()
         this.drawText()
-        // let imgData = this.ctx.getImageData(40,40,1,1)
-        // debugger
-        // console.log(this.numTargets)
-        // console.log(this.currentLevel)
-        // debugger
+        this.drawCounter()
         if (this.numTargets === 0) {
             this.currentLevel += 1;
+            this.levelUp = true;
             this.restart(this.currentLevel)
-            // this.ctx.font = '38px VT323'
-            // this.ctx.fillStyle = 'yellow';
-            // this.ctx.fillText('Level Up!', this.canvas.width / 4, 40)
-            // this.ctx.save()
-        //     debugger
-        // this.ctx.font = '24px VT323';
-        // this.ctx.shadowColor = 'black';
-        // this.ctx.shadowOffsetX = 3;
-        // this.ctx.shadowOffsetY = 3;
-        // this.ctx.shadowBlur = 15;
-        // this.ctx.fillStyle = 'white';
-        // this.ctx.fillText("Congrats!", 50, 70);
-        // this.ctx.restore()
-            // setTimeout(this.restart(this.currentLevel),4000)
         }
         if (this.moving) {
-            requestAnimationFrame(this.animate.bind(this))
+            let myReq = requestAnimationFrame(this.animate.bind(this))
         }
     }
 
 
     levelUpText(){
         this.textTimer += 1
-        this.ctx.font = '38px VT323'
-        this.ctx.fillStyle = 'yellow';
-        this.ctx.fillText(`${levelMessages[this.currentLevel]}`, this.canvas.width / 3, 100)
-        // this.ctx.save()
-        this.ctx.font = '24px VT323';
-        // this.ctx.shadowColor = 'black';
-        // this.ctx.shadowOffsetX = 3;
-        // this.ctx.shadowOffsetY = 3;
-        // this.ctx.shadowBlur = 15;
+        this.ctx.save()
+        this.ctx.font = '38px Dosis'
         this.ctx.fillStyle = 'white';
+        this.ctx.strokeStyle = 'yellow'
+        this.ctx.fillText(`${levelMessages[this.currentLevel]}`, this.canvas.width / 3, 100)
+        this.ctx.strokeText(`${levelMessages[this.currentLevel]}`, this.canvas.width / 3, 100)
+        // this.ctx.save()
+        this.ctx.font = '28px Dosis';
+        // this.ctx.fillStyle = 'white';
+        this.ctx.strokeStyle = 'skyblue'
         this.ctx.fillText(`${levelInstruction[this.currentLevel]}`, 200, 140);
-            // this.ctx.restore()
+        this.ctx.strokeText(`${levelInstruction[this.currentLevel]}`, 200, 140);
+        this.ctx.restore();
     }
 
     drawText(){
-        if (this.textTimer < 0.5 && this.currentLevel === 0 ) {
+        if (this.textTimer ===0) {
             this.ctx.save()
-            this.ctx.font = '20px Arial'
-             this.ctx.fillStyle = 'rgba(255,255,255,0.7)';
-             this.ctx.shadowColor = 'rgba(0,0,0,0.7)'
-             this.ctx.shadowBlur = 5
+            this.ctx.font = '25px Dosis'
+            // this.ctx.strokeStyle = 'blue'
+            this.ctx.fillStyle = 'rgba(255,255,255)';
+            this.ctx.shadowColor = 'rgba(0,0,0,0.7)'
+            this.ctx.shadowBlur = 5
             this.ctx.fillText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
+            // this.ctx.strokeText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
             this.ctx.restore();
         }
-        if (this.textTimer > 0.5 && this.textTimer < 100 ){
+        if ((this.textTimer < 100 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
             this.levelUpText()
         } else {
             this.textTimer += 1
@@ -144,9 +148,22 @@ export default class Game {
     }
 
     gameover(){
-        if (this.currentLevel >= LEVELS.length){
+        return this.currentLevel >= Object.keys(LEVELS).length
+    }
 
-        }
+    gameoverFrame(){
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        const gamePage = document.getElementById('game-page')
+        gamePage.style.backgroundColor = 'orange'
+        const gameoverBox = document.getElementById('gameover-box')
+        gameoverBox.style.transition = 'all 1s ease-in-out;'
+        gameoverBox.style.opacity = 1;
+        let gameoverMessage = document.createElement('p')
+        let minutes = Math.floor(this.timer / 60)
+        let seconds = Math.floor(this.timer % 60)
+        gameoverMessage.innerHTML = `You spent ${minutes}M ${seconds}S to clear all the levels. Congratulations!`
+        document.getElementById("gameover-messsage").appendChild(gameoverMessage)
+        document.getElementById("you-won-message").style.animation = "shake 0.5s";
     }
 
 }
