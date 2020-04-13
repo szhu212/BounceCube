@@ -20,14 +20,29 @@ export default class Player {
         ctx.fillRect(this.x, this.y, CONSTANTS.PLAYER_WIDTH, CONSTANTS.PLAYER_HEIGHT);
     }
 
-    pushPlayer(keysTracker){
-        // debugger
+    // pushPlayer(keysTracker){
+    //     // debugger
+    //     if (keysTracker[KEYS.UP]){
+    //         // this.onGround = false;
+    //         this.velY -= 1 * CONSTANTS.UP_SPEED 
+    //         if (this.velY < -CONSTANTS.MAX_SPEED) {
+    //             this.velY = -CONSTANTS.MAX_SPEED
+    //         }
+    //     }
+    //     if (keysTracker[KEYS.LEFT]) {  
+    //         // debugger          
+    //         this.velX -= CONSTANTS.HORIZENTAL_SPEED 
+    //     }
+    //     if (keysTracker[KEYS.RIGHT]){         
+    //         this.velX +=  CONSTANTS.HORIZENTAL_SPEED
+    //     }
+    // }
+
+    updatePlayer(keysTracker) {
         if (keysTracker[KEYS.UP]){
             // this.onGround = false;
-            this.velY -= 1 * CONSTANTS.UP_SPEED 
-            if (this.velY < -CONSTANTS.MAX_SPEED) {
-                this.velY = -CONSTANTS.MAX_SPEED
-            }
+             this.velY -= 1 * CONSTANTS.UP_SPEED 
+             
         }
         if (keysTracker[KEYS.LEFT]) {  
             // debugger          
@@ -36,67 +51,59 @@ export default class Player {
         if (keysTracker[KEYS.RIGHT]){         
             this.velX +=  CONSTANTS.HORIZENTAL_SPEED
         }
-    }
-
-    updatePlayer() {
         // console.log(this.x, this.y)
-        // console.log(`velY ${this.velY}`)
-        // console.log(`this.y ${this.y}`)
         // this.onGround = false;           
     // debugger
-    this.velX *= CONSTANTS.FRICTION  
-    if(this.y < 390){
-        this.velY += CONSTANTS.GRAVITY 
-    }   
-    if(this.velY > 0){
-        this.velY -= CONSTANTS.AIR_FRICTION 
-    } else {
-        this.velY += CONSTANTS.AIR_FRICTION
-    }
-    // debugger    
-    if(Math.abs(this.velX) > CONSTANTS.MAX_SPEED){
-            if(this.velX > 0) {
-                this.velX = CONSTANTS.MAX_SPEED
-            } else {
-                this.velX = - 1 * CONSTANTS.MAX_SPEED
-            }
-    }
-        
-    if(Math.abs(this.velY) > CONSTANTS.MAX_SPEED){
-        if(this.velY > 0) {
-            this.velY = CONSTANTS.MAX_SPEED
+        this.velX *= CONSTANTS.FRICTION  
+        if(this.y < 390){
+            this.velY += CONSTANTS.GRAVITY 
+        }   
+        if(this.velY > 0){
+            this.velY -= CONSTANTS.AIR_FRICTION 
         } else {
-            this.velY = -1 * CONSTANTS.MAX_SPEED
+            this.velY += CONSTANTS.AIR_FRICTION
         }
-    }
-
-    if (this.collideWithBrick()){
-        this.resolveCollision()
-    }
-
-        // if(this.onGround) {
-        //     this.velY = 0;
-        // }
-
-    this.x += this.velX
-    this.y += this.velY
-
-    if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {
-        this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
-    }  else if (this.x < 0) {
-        this.x = CONSTANTS.BOARDER_WIDTH
-    }
-    if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT) {
-        this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT
-    }  
-    else if (this.y < 0) {
-        this.y = 0
-    }
-        // console.log(CONSTANTS.BOARDER_WIDTH)
-        // console.log(CONSTANTS.EDGE)
-        // console.log(this.dimensions.height - CONSTANTS.EDGE - CONSTANTS.BOARDER_WIDTH)
-        // debugger
+        // debugger    
+        if(Math.abs(this.velX) > CONSTANTS.MAX_SPEED){
+                if(this.velX > 0) {
+                    this.velX = CONSTANTS.MAX_SPEED
+                } else {
+                    this.velX = - 1 * CONSTANTS.MAX_SPEED
+                }
+        }
         
+        if(Math.abs(this.velY) > CONSTANTS.MAX_SPEED){
+            if(this.velY > 0) {
+                this.velY = CONSTANTS.MAX_SPEED
+            } else {
+                this.velY = -1 * CONSTANTS.MAX_SPEED
+            }
+        }
+
+        if (this.collideWithBrick()){
+            this.resolveCollision()
+        }
+
+    // if(this.onGround) {
+    //     this.velY = 0;
+    // }
+
+        // console.log(`velY ${this.velY}`)
+        // console.log(`this.y ${this.y}`)
+        this.x += this.velX
+        this.y += this.velY
+
+        if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {
+            this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
+        }  else if (this.x < 0) {
+            this.x = CONSTANTS.BOARDER_WIDTH
+        }
+        if (this.y > this.dimensions.height - CONSTANTS.PLAYER_HEIGHT) {
+            this.y = this.dimensions.height - CONSTANTS.PLAYER_HEIGHT
+        }  
+        else if (this.y < 0) {
+            this.y = 0
+        }    
     }
 
     bounds(){
@@ -108,26 +115,22 @@ export default class Player {
         }
     }
 
-    animate(ctx) {
-        this.updatePlayer();
+    animate(ctx, keysTracker) {
+        this.updatePlayer(keysTracker);
+        // this.pushPlayer(keysTracker);
         this.drawPlayer(ctx);
+      
     }
 
     collideWithBrick(){
         let collision = false;
         // debugger
-
         Object.values(this.level.bricks).forEach(
             brick => {
             if (_overlap(brick, this.bounds())){
                 collision = true;
             }
             })
-        // this.level.bricks.forEach(brick => {
-        //     if (_overlap(brick, this.bounds())){
-        //         collision = true;
-        //     }
-        // })
         return collision;
     }
 
@@ -200,10 +203,6 @@ export default class Player {
             brick => {
             _overlapDir(this.bounds(), brick)
         })
-        // this.level.bricks.forEach(brick => {
-        //     _overlapDir(this.bounds(), brick)
-        // })
-        // console.log(collisionDir)
         return collisionDir
     }
 
@@ -228,15 +227,18 @@ export default class Player {
                 }
             }
             if (this.collisionDir()[1] === "top"){
-                this.y += this.collisionAdj
-                this.velY *= -1
-            
+                    this.y += this.collisionAdj
+                    this.velY *= -1
             }
             if (this.collisionDir()[1] === "bottom"){
                 this.y += this.collisionAdj
                 // this.onGround = true;
-                this.velY *= -1
-                this.bottomCollision = true;
+                 if(this.velY<0 && this.velY > -2){
+                this.velY =0 
+               } else {
+                     this.velY *= -1
+                }
+                 this.bottomCollision = true 
 
             }
             this.collisionAdj = 0

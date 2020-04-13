@@ -5,7 +5,7 @@ export default class Level {
 
     constructor(dimensions, currentLevel){
         this.dimensions = dimensions;
-        this.level = LEVELS[currentLevel];
+        this.level = JSON.parse(JSON.stringify(LEVELS))[currentLevel];
         this.currentLevel = currentLevel;
         // this.bricks = [];
         this.bricks = {};
@@ -17,12 +17,13 @@ export default class Level {
     };
  
     drawLevel(ctx, player) {
-        
         const wallWidth = this.dimensions.width / this.level[0].length
         const wallHeight = this.dimensions.height / this.level.length
         // debugger
         let numBricks = myCount(this.level.flat(), 1)
         this.numTargets = myCount(this.level.flat(), 2)
+        // console.log("Level")
+        // console.log(LEVELS[0])
         // ctx.save()
         for(let row = 0; row < this.level.length; row ++){
             for(let col= 0; col < this.level[0].length; col++){
@@ -40,11 +41,6 @@ export default class Level {
                     }
                     ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
                    this.bricks[[row, col]] = {left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)}
-                    // this.bricks.push({left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)})
-                    // if (this.bricks.length > numBricks){
-                    //     this.bricks = this.bricks.slice(1)
-                    // }
-                    // ctx.save()
                 }
                 else if(this.level[row][col] === 2){
                     // debugger
@@ -54,21 +50,6 @@ export default class Level {
                     if(row === this.level.length){
                         upStart -= CONSTANTS.BOARDER_WIDTH
                     }
-                    // let imgData = ctx.getImageData(leftStart+1,upStart +1,1,1)
-                    // let prevColor = imgData.data[0] + ' ,' + imgData.data[1] + ' ,' + imgData.data[2]
-                    // debugger
-                    // console.log(prevColor)
-                    // console.log(Object.values(colors).includes(prevColor))
-                    // let targetColor
-                    // if (!Object.values(colors).includes(prevColor)){
-                    //     targetColor = this.randomColor()
-                    //     debugger
-                    // }
-                    // else {
-                    //     targetColor = prevColor
-                    // }
-
-                    // let targetColor = this.randomColor()
                     let targetColor
                     // debugger
                     let pos = row + ',' + col
@@ -98,7 +79,6 @@ export default class Level {
                         const gamePage = document.getElementById('game-page')
                         // gamePage.style.transition = 'background-color 1s ease-in-out;'
                         gamePage.style.backgroundColor = `rgba(${this.color}, 0.6)`
-                        // console.log(this.bricks)
                     }
                 }
             }

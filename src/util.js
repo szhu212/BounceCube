@@ -1,13 +1,13 @@
 
 export const CONSTANTS = {
-    GRAVITY: 0.3,
+    GRAVITY: 0.8,
     FRICTION: 0.8,
-    AIR_FRICTION: 0.1,
+    AIR_FRICTION: 0.4,
     PLAYER_WIDTH: 15,
     PLAYER_HEIGHT: 15,
-    UP_SPEED: 4,
-    HORIZENTAL_SPEED: 3,
-    MAX_SPEED: 6,
+    UP_SPEED: 2,
+    HORIZENTAL_SPEED: 1,
+    MAX_SPEED: 4,
     EDGE: 10,
     BOARDER_WIDTH : 0
 }
@@ -34,13 +34,13 @@ export const LEVELS = {
     ],
     1: [
         [1,1,1,1,1,0,0],
-        [0,0,0,0,2,0,0],
+        [0,0,0,0,0,0,0],
         [1,1,0,0,0,0,0],
         [0,0,0,0,0,0,1],
-        [0,2,0,0,0,1,1],
+        [0,0,0,0,0,1,1],
         [1,1,0,0,0,0,0],
         [0,0,0,0,0,0,0],
-        [0,2,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0],
         [2,0,0,0,0,0,0],
         [0,0,1,1,1,0,0]

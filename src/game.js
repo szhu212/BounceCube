@@ -9,39 +9,46 @@ export default class Game {
         this.canvas = canvas
         this.dimensions = { width: canvas.width, height: canvas.height };
         this.keysTracker = {};
-        this.moving = false;
+        this.running = false;
         this.currentLevel = 0 
         this.totalTarget = 0 
         this.registerEvents();
         this.restart(this.currentLevel);
-        this.levelUp = false
+        this.levelUp = false;
+        this.gameoverTracker = false;
     }
 
     play() {
         // debugger
-        this.moving = true
+        this.running = true
         // debugger
         if (Object.values(this.keysTracker).length > 0 && Object.values(this.keysTracker).some(val => val ===true))
         {this.animate()};
       }
 
     restart(currentLevel) {
+        // debugger
+        console.log(this.currentLevel)
+        this.gameoverTracker = false
         if (!this.levelUp){
-            this.moving = false;
+            this.running = false;
         }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
-        this.level = new Level(this.dimensions, currentLevel);
-        this.player = new Player(this.dimensions, this.keysTracker, this.level);
         this.numTargets = 1
         // console.log(this.gameover())
         // console.log(this.currentLevel)
         // console.log(this.currentLevel <= Object.keys(LEVELS).length)
         if(this.gameover()){
             // debugger
+            this.currentLevel = 0
+            this.gameoverTracker = true
             this.gameoverFrame()
         } else {
+            this.level = new Level(this.dimensions, currentLevel);
+            this.player = new Player(this.dimensions, this.keysTracker, this.level);
             this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length  
+            // debugger
             this.animate();
             // cancelAnimationFrame(myReq)
         }
@@ -50,11 +57,26 @@ export default class Game {
     keyDownHandler(e) {
         // debugger
         this.keysTracker[e.keyCode] = true;
-        if(!this.moving){
+        if (this.keysTracker["82"]){
+            // debugger
+            if (this.gameoverTracker){
+                // debugger
+                this.currentLevel = 0
+                this.startTime = Date.now()
+                this.running = false
+                const gameoverPage = document.getElementById("gameover-box")
+                gameoverPage.style.opacity = "0";
+                
+            } 
+        
+            // debugger
+                this.restart(this.currentLevel)
+        }
+        else if(!this.running){
             this.play()
         }
     
-        this.player.pushPlayer(this.keysTracker)
+        // this.player.pushPlayer(this.keysTracker)
         // debugger
     }
 
@@ -75,7 +97,7 @@ export default class Game {
     }
 
     drawTimer(){
-        this.timer = Math.floor(Date.now() - this.startTime)/1000
+        this.timer = Math.floor((Date.now() - this.startTime)/1000)
         if (this.textTimer === 0 && this.currentLevel === 0){this.timer = 0}
         this.ctx.font = '20px Dosis'
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -90,23 +112,24 @@ export default class Game {
      }
 
     animate() {
+        
         // console.log(Date.now())
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.level.animate(this.ctx, this.player)
     
-        this.player.animate(this.ctx)
+        this.player.animate(this.ctx, this.keysTracker)
         this.numTargets = this.level.numTargets
         this.drawTimer()
         this.drawText()
         this.drawCounter()
-        if (this.numTargets === 0) {
+        if (this.numTargets === 0 && !this.gameoverTracker) {
             this.currentLevel += 1;
             this.levelUp = true;
             this.restart(this.currentLevel)
         }
-        if (this.moving) {
-            let myReq = requestAnimationFrame(this.animate.bind(this))
+        if (this.running) {
+            requestAnimationFrame(this.animate.bind(this))
         }
     }
 
@@ -158,11 +181,14 @@ export default class Game {
         const gameoverBox = document.getElementById('gameover-box')
         gameoverBox.style.transition = 'all 1s ease-in-out;'
         gameoverBox.style.opacity = 1;
-        let gameoverMessage = document.createElement('p')
+        // gameoverBox.style.display = block;
+        let gameoverMessageP = document.createElement('p')
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
-        gameoverMessage.innerHTML = `You spent ${minutes}M ${seconds}S to clear all the levels. Congratulations!`
-        document.getElementById("gameover-messsage").appendChild(gameoverMessage)
+        gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all the levels. Congratulations!`
+        const  gameoverMessage = document.getElementById("gameover-messsage")
+        gameoverMessage.innerHTML = '';
+        gameoverMessage.appendChild(gameoverMessageP)
         document.getElementById("you-won-message").style.animation = "shake 0.5s";
     }
 
