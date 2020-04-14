@@ -1,3 +1,14 @@
+.a, a:link, a:visited {
+  color: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+}
+
+.about-me-bar i:hover {
+    transform: scale(1.2);
+  
+}
+
 .brick-image {
     display: none;
 }
@@ -102,4 +113,59 @@
 .new-game-instruction:hover {
     transform: scale(1.2);
     transition: all 0.5s ease-in-out;
+}
+
+.game-section-container {
+    display: flex;
+    margin-top:10vh;
+}
+
+.controls {
+    text-align: left;
+    border: 2px solid white;
+    border-radius: 3px;
+    padding: 0px 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.fa-github {
+    width: 40px;
+    height: 40px;
+    /* background-color: white; */
+}
+
+/* .github {
+    width: 40px;
+    height: 40px;
+    /* background-color: blue; */
+/* } */ */
+
+.fab {
+    font-family: "Font Awesome 5 Brands";
+}
+
+.about-me-bar {
+    border: 2px solid white;
+    border-radius: 3px;
+    padding: 0px 20px;
+    z-index: 2;
+    max-height: 200px;
+    margin-left:10px;
+}
+
+.side-bar {
+    z-index: 2;
+}
+
+.about-me-bar {
+    margin-right: 15px;
+}
+
+.about-me-bar div {
+    margin-top: 10px;
+}
+
+.game-page h1{
+    margin-top: 100px;
 }

@@ -36,9 +36,6 @@ export default class Game {
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
         this.numTargets = 1
-        // console.log(this.gameover())
-        // console.log(this.currentLevel)
-        // console.log(this.currentLevel <= Object.keys(LEVELS).length)
         if(this.gameover()){
             // debugger
             this.currentLevel = 0
@@ -50,7 +47,6 @@ export default class Game {
             this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length  
             // debugger
             this.animate();
-            // cancelAnimationFrame(myReq)
         }
     }
 
@@ -190,6 +186,11 @@ export default class Game {
         gameoverMessage.innerHTML = '';
         gameoverMessage.appendChild(gameoverMessageP)
         document.getElementById("you-won-message").style.animation = "shake 0.5s";
+        firebase.database().ref('scores').push({name: "ABC", score: this.timer})
+    }
+
+    fetchScores() {
+
     }
 
 }

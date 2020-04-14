@@ -3,16 +3,22 @@
   <title>Bounce Cube</title>
   <link href="https://fonts.googleapis.com/css?family=Dosis:800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./assets/stylesheet.css" type="text/css"/>
-  <script type="text/javascript" src="./dist/main.js" charset="utf-8" defer></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+  
 </head>
 <body>
   <div id="game-page">
     <div class="gradient-transition"></div>
       <h1>Bounce Cube</h1>
-      <div class="game-section-holder">
+      <div class="game-section-container">
         <div class="side-bar">
-          
-
+          <div class="controls"> 
+            <h2>Controls:</h2>
+            <p>↑: Move Upwards</p>
+            <p>←: Move Left</p>
+            <p>←: Move Right</p>
+            <p>R:  Restart Level</p>
+          </div> 
         </div>
         <div id="canvas-container">
           <div id="gameover-box">
@@ -24,13 +30,53 @@
           </div>
           <canvas id="game-canvas" height="400" width = "600"></canvas>
         </div>
+        <div class="about-me-bar">
+          <div class="github">
+            <a href="https://github.com/szhu212/BounceCube">
+              <i class="fab fa-github fa-3x"></i>
+           </a>
+          </div>
+          <div class="linkedin">
+            <a href="https://www.linkedin.com/in/skylar-wenyu-zhu-98aa00108/">
+              <i class="fab fa-linkedin fa-3x"></i>
+            </a>
+          </div>
+          <div>
+            <i class="fas fa-portrait fa-3x"></i>
+            <!-- <i class="far fa-id-card fa-3x"></i> -->
+          </div>
+        </div>
     </div>
       <div class="brick-image">
         <img id="brick-image" src="assets/brick.png"> 
       </div>
-   
-     
   </div>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-database.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyC0HMhjkub8uxM35IapNuQJVEdineECcXo",
+    authDomain: "bounce-cube.firebaseapp.com",
+    databaseURL: "https://bounce-cube.firebaseio.com",
+    projectId: "bounce-cube",
+    storageBucket: "bounce-cube.appspot.com",
+    messagingSenderId: "730295214451",
+    appId: "1:730295214451:web:3b1f755ebd2886c56e6506",
+    measurementId: "G-WR4E262KYT"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
+<script type="text/javascript" src="./dist/main.js" charset="utf-8" defer></script>
 </body>
 </html>
 
