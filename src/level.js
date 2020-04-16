@@ -22,9 +22,6 @@ export default class Level {
         // debugger
         let numBricks = myCount(this.level.flat(), 1)
         this.numTargets = myCount(this.level.flat(), 2)
-        // console.log("Level")
-        // console.log(LEVELS[0])
-        // ctx.save()
         for(let row = 0; row < this.level.length; row ++){
             for(let col= 0; col < this.level[0].length; col++){
                 let leftStart = col * wallWidth;
@@ -58,26 +55,14 @@ export default class Level {
                     } else {
                         targetColor = this.randomColor()
                     }
-                    // ctx.shadowColor = 'white';
-                    // ctx.shadowBlur = 5
                     ctx.fillStyle = `rgb(${targetColor})`
-                    // debugger 
                     ctx.fillRect(leftStart, upStart, this.targetLength, this.targetLength)
-                    // ctx.lineWidth = 1;
-                    // ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-                    // ctx.strokeRect(leftStart, upStart, this.targetLength, this.targetLength)
-                    // ctx.restore()
                     let currentTarget = {left : leftStart, top:upStart, right : (leftStart + this.targetLength), bottom : (upStart + this.targetLength), color: targetColor}
                     this.targets[[row, col]] = targetColor
-                    // if (this.targets.length > this.numTargets){
-                    //     this.targets = this.targets.slice(1)
-                    // }
                     if(_overlap(player.bounds(), currentTarget)){
-                        // debugger
                         this.level[row][col] = 0
                         this.color = currentTarget.color
                         const gamePage = document.getElementById('game-page')
-                        // gamePage.style.transition = 'background-color 1s ease-in-out;'
                         gamePage.style.backgroundColor = `rgba(${this.color}, 0.6)`
                     }
                 }

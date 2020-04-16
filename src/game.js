@@ -1,6 +1,6 @@
 import Player from "./player"
 import Level from "./level"
-import {levelMessages, levelInstruction, LEVELS} from "./util"
+import {levelMessages, levelInstruction, LEVELS, fetchScores, renderScores, scores, submitScore} from "./util"
 
 export default class Game {
 
@@ -16,6 +16,8 @@ export default class Game {
         this.restart(this.currentLevel);
         this.levelUp = false;
         this.gameoverTracker = false;
+        this.scores = [];
+        this.highestScoreMode = false; 
     }
 
     play() {
@@ -28,13 +30,16 @@ export default class Game {
 
     restart(currentLevel) {
         // debugger
-        console.log(this.currentLevel)
+        // console.log(this.currentLevel)
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
         }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
+        // renderScores()
+        // renderScores()
+        // fetchScores()
         this.numTargets = 1
         if(this.gameover()){
             // debugger
@@ -51,33 +56,23 @@ export default class Game {
     }
 
     keyDownHandler(e) {
-        // debugger
         this.keysTracker[e.keyCode] = true;
-        if (this.keysTracker["82"]){
-            // debugger
+        if (this.keysTracker["82"]&& !this.highestScoreMode){
             if (this.gameoverTracker){
-                // debugger
                 this.currentLevel = 0
                 this.startTime = Date.now()
                 this.running = false
                 const gameoverPage = document.getElementById("gameover-box")
-                gameoverPage.style.opacity = "0";
-                
-            } 
-        
-            // debugger
+                gameoverPage.style.opacity = "0";   
+            }  
                 this.restart(this.currentLevel)
         }
-        else if(!this.running){
+        else if(!this.running && !this.highestScoreMode){
             this.play()
         }
-    
-        // this.player.pushPlayer(this.keysTracker)
-        // debugger
     }
 
     keyUpHandler(e) {
-        // debugger
         this.keysTracker[e.keyCode] = false;
     }
     
@@ -108,8 +103,6 @@ export default class Game {
      }
 
     animate() {
-        
-        // console.log(Date.now())
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.level.animate(this.ctx, this.player)
@@ -138,9 +131,7 @@ export default class Game {
         this.ctx.strokeStyle = 'yellow'
         this.ctx.fillText(`${levelMessages[this.currentLevel]}`, this.canvas.width / 3, 100)
         this.ctx.strokeText(`${levelMessages[this.currentLevel]}`, this.canvas.width / 3, 100)
-        // this.ctx.save()
         this.ctx.font = '28px Dosis';
-        // this.ctx.fillStyle = 'white';
         this.ctx.strokeStyle = 'skyblue'
         this.ctx.fillText(`${levelInstruction[this.currentLevel]}`, 200, 140);
         this.ctx.strokeText(`${levelInstruction[this.currentLevel]}`, 200, 140);
@@ -171,6 +162,7 @@ export default class Game {
     }
 
     gameoverFrame(){
+        let gameScore = this.timer
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         const gamePage = document.getElementById('game-page')
         gamePage.style.backgroundColor = 'orange'
@@ -186,11 +178,37 @@ export default class Game {
         gameoverMessage.innerHTML = '';
         gameoverMessage.appendChild(gameoverMessageP)
         document.getElementById("you-won-message").style.animation = "shake 0.5s";
-        firebase.database().ref('scores').push({name: "ABC", score: this.timer})
+        let highScores = []
+        scores.forEach(el => {
+            highScores.push(el.score) 
+        })
+
+        let lowestRecord = Math.max(...highScores)
+        let name = ''
+        if(gameScore < lowestRecord) {
+            this.highestScoreMode = true
+            let recordSubmissionDiv = document.getElementById("record-submission") 
+            recordSubmissionDiv.innerHTML = ''
+            let nameInput = document.createElement('input')
+            nameInput.type = 'text'
+            nameInput.placeholder = 'Please enter your name'
+            recordSubmissionDiv.appendChild(nameInput)
+            nameInput.addEventListener('change', e => {
+                name = e.currentTarget.value;
+              });
+            let submitButton = document.createElement('button')
+            submitButton.innerHTML = 'Submit' 
+            recordSubmissionDiv.appendChild(submitButton)
+            submitButton.addEventListener('click', e => {
+                this.highestScoreMode = false
+                submitScore(name, gameScore)
+            })
+        }  
     }
 
-    fetchScores() {
 
-    }
+    // fetchScores() {
+    //     firebase.database().ref('scores').orderByChild('score').limitToFirst(4)
+    // }
 
 }

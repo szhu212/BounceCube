@@ -11,12 +11,13 @@
     <div class="gradient-transition"></div>
       <h1>Bounce Cube</h1>
       <div class="game-section-container">
+        <div class="space"></div>
         <div class="side-bar">
           <div class="controls"> 
             <h2>Controls:</h2>
             <p>↑: Move Upwards</p>
             <p>←: Move Left</p>
-            <p>←: Move Right</p>
+            <p>→: Move Right</p>
             <p>R:  Restart Level</p>
           </div> 
         </div>
@@ -25,27 +26,35 @@
             <div class="message-container">
               <h2 id="you-won-message"> You Won!</h2>
               <div id="gameover-messsage"></div>
+              <div id ="record-submission"></div>
             </div>
             <p class="new-game-instruction"> Press R to restart a game. </p>
           </div>
           <canvas id="game-canvas" height="400" width = "600"></canvas>
         </div>
-        <div class="about-me-bar">
-          <div class="github">
-            <a href="https://github.com/szhu212/BounceCube">
-              <i class="fab fa-github fa-3x"></i>
-           </a>
-          </div>
-          <div class="linkedin">
-            <a href="https://www.linkedin.com/in/skylar-wenyu-zhu-98aa00108/">
-              <i class="fab fa-linkedin fa-3x"></i>
+        <div class="about-and-high-score-container">
+          <div class="about-me-bar">
+            <div class="github">
+              <a href="https://github.com/szhu212/BounceCube">
+                <i class="fab fa-github fa-3x"></i>
             </a>
+            </div>
+            <div class="linkedin">
+              <a href="https://www.linkedin.com/in/skylar-wenyu-zhu-98aa00108/">
+                <i class="fab fa-linkedin fa-3x"></i>
+              </a>
+            </div>
+            <div>
+              <i class="fas fa-portrait fa-3x"></i>
+              <!-- <i class="far fa-id-card fa-3x"></i> -->
+            </div>
           </div>
-          <div>
-            <i class="fas fa-portrait fa-3x"></i>
-            <!-- <i class="far fa-id-card fa-3x"></i> -->
+          <div class="high-score-bar">
+            <h2>Best Records:</h2>
+              <div id="high-scores"></div>
           </div>
-        </div>
+       </div>
+       <div class="space"></div>
     </div>
       <div class="brick-image">
         <img id="brick-image" src="assets/brick.png"> 
