@@ -1,8 +1,23 @@
+const path = require('path');
 module.exports = {
+    context: __dirname,
     entry: './src/index.js',
     output: {
-      filename: './src/index.js'
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'main.js'
     },
-    devtool: 'source-map'
-  }
+    module: {
+        rules: [
+            {
+                test: /\.jsx?$/,
+                exclude: /(node_modules)/
+                
+            }
+        ]
+    },
+    devtool: 'source-map',
+    resolve: {
+        extensions: [".js", ".jsx", "*"]
+    }
+};
   
