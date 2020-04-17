@@ -126,9 +126,7 @@ export const myCount = (arr, target) => {
 
 let fetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
 export const scores = []
-
-
-  
+ 
 fetchScores.on('child_added', snapshot => {
     scores.push(snapshot.val())
     let highScoreDiv = document.getElementById('high-scores')
@@ -193,3 +191,9 @@ export const submitScore = (name, score) => {
     recordSubmissionDiv.innerHTML = ''
     renderScores()
 }
+
+const music = new Audio('assets/bensound-summer.mp3') 
+
+export const playAudio = () => {
+    music.play();
+  }

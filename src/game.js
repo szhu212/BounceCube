@@ -1,6 +1,6 @@
 import Player from "./player"
 import Level from "./level"
-import {levelMessages, levelInstruction, LEVELS, fetchScores, renderScores, scores, submitScore} from "./util"
+import {levelMessages, levelInstruction, LEVELS, renderScores, scores, submitScore, playAudio} from "./util"
 
 export default class Game {
 
@@ -18,6 +18,8 @@ export default class Game {
         this.gameoverTracker = false;
         this.scores = [];
         this.highestScoreMode = false; 
+        this.playingMusic = false;
+        // playAudio();
     }
 
     play() {
@@ -162,6 +164,7 @@ export default class Game {
     }
 
     gameoverFrame(){
+       
         let gameScore = this.timer
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         const gamePage = document.getElementById('game-page')
@@ -189,9 +192,12 @@ export default class Game {
             this.highestScoreMode = true
             let recordSubmissionDiv = document.getElementById("record-submission") 
             recordSubmissionDiv.innerHTML = ''
+            let highScoreMessageP = document.createElement('p')
+            highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our high score board ☺' 
+            recordSubmissionDiv.appendChild(highScoreMessageP)
             let nameInput = document.createElement('input')
             nameInput.type = 'text'
-            nameInput.placeholder = 'Please enter your name'
+            nameInput.placeholder = 'Please enter your name here'
             recordSubmissionDiv.appendChild(nameInput)
             nameInput.addEventListener('change', e => {
                 name = e.currentTarget.value;
