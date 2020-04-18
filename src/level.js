@@ -31,7 +31,7 @@ export default class Level {
                     // debugger
                     // const image = document.getElementById('ice-image');
                     const image = new Image();
-                    image.src = '../assets/brick.png';
+                    image.src = './assets/brick.png';
                     // debugger
                     image.onload = function () {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);

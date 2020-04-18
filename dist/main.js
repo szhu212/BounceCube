@@ -120,13 +120,10 @@ class Game {
         this.scores = [];
         this.highestScoreMode = false; 
         this.playingMusic = false;
-        // playAudio();
     }
 
     play() {
-        // debugger
         this.running = true
-        // debugger
         if (Object.values(this.keysTracker).length > 0 && Object.values(this.keysTracker).some(val => val ===true))
         {this.animate()};
       }
@@ -341,18 +338,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const musicButton = document.getElementById('music-button')
 const musicIcon = document.getElementById('music-icon')
-const music = new Audio('../assets/bensound-summer.mp3') 
+const music = new Audio('/assets/bensound-summer.mp3') 
 let playingMusic = false
 musicButton.addEventListener('click', handleMusic)
 
 function handleMusic() {
     if (playingMusic){
         playingMusic = false;
-        musicIcon.src = "../assets/play-music.png"
+        musicIcon.src = "/assets/play-music.png"
         music.pause()
     } else {
         playingMusic = true
-        musicIcon.src = "../assets/stop-music.png"
+        musicIcon.src = "/assets/stop-music.png"
         music.play()
     }
 }
@@ -403,7 +400,7 @@ class Level {
                     // debugger
                     // const image = document.getElementById('ice-image');
                     const image = new Image();
-                    image.src = '../assets/brick.png';
+                    image.src = './assets/brick.png';
                     // debugger
                     image.onload = function () {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
@@ -950,7 +947,7 @@ const submitScore = (name, score) => {
     renderScores()
 }
 
-const music = new Audio('../assets/bensound-summer.mp3') 
+const music = new Audio('/assets/bensound-summer.mp3') 
 
 const playAudio = () => {
     music.play();

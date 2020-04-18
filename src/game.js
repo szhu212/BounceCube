@@ -19,13 +19,10 @@ export default class Game {
         this.scores = [];
         this.highestScoreMode = false; 
         this.playingMusic = false;
-        // playAudio();
     }
 
     play() {
-        // debugger
         this.running = true
-        // debugger
         if (Object.values(this.keysTracker).length > 0 && Object.values(this.keysTracker).some(val => val ===true))
         {this.animate()};
       }
