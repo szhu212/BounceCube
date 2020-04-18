@@ -192,7 +192,7 @@ export const submitScore = (name, score) => {
     renderScores()
 }
 
-const music = new Audio('assets/bensound-summer.mp3') 
+const music = new Audio('../assets/bensound-summer.mp3') 
 
 export const playAudio = () => {
     music.play();

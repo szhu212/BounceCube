@@ -94,7 +94,231 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Game; });\n/* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player */ \"./src/player.js\");\n/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./level */ \"./src/level.js\");\n/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util */ \"./src/util.js\");\n\n\n\n\nclass Game {\n\n    constructor(canvas){\n        this.ctx = canvas.getContext(\"2d\");\n        this.canvas = canvas\n        this.dimensions = { width: canvas.width, height: canvas.height };\n        this.keysTracker = {};\n        this.running = false;\n        this.currentLevel = 0 \n        this.totalTarget = 0 \n        this.registerEvents();\n        this.restart(this.currentLevel);\n        this.levelUp = false;\n        this.gameoverTracker = false;\n        this.scores = [];\n        this.highestScoreMode = false; \n        this.playingMusic = false;\n        // playAudio();\n    }\n\n    play() {\n        // debugger\n        this.running = true\n        // debugger\n        if (Object.values(this.keysTracker).length > 0 && Object.values(this.keysTracker).some(val => val ===true))\n        {this.animate()};\n      }\n\n    restart(currentLevel) {\n        // debugger\n        // console.log(this.currentLevel)\n        this.gameoverTracker = false\n        if (!this.levelUp){\n            this.running = false;\n        }\n        this.startTime = this.startTime || Date.now();\n        this.textTimer = 0\n        // renderScores()\n        // renderScores()\n        // fetchScores()\n        this.numTargets = 1\n        if(this.gameover()){\n            // debugger\n            this.currentLevel = 0\n            this.gameoverTracker = true\n            this.gameoverFrame()\n        } else {\n            this.level = new _level__WEBPACK_IMPORTED_MODULE_1__[\"default\"](this.dimensions, currentLevel);\n            this.player = new _player__WEBPACK_IMPORTED_MODULE_0__[\"default\"](this.dimensions, this.keysTracker, this.level);\n            this.totalTarget = _util__WEBPACK_IMPORTED_MODULE_2__[\"LEVELS\"][this.currentLevel].flat().filter(el => el ===2).length  \n            // debugger\n            this.animate();\n        }\n    }\n\n    keyDownHandler(e) {\n        this.keysTracker[e.keyCode] = true;\n        if (this.keysTracker[\"82\"]&& !this.highestScoreMode){\n            if (this.gameoverTracker){\n                this.currentLevel = 0\n                this.startTime = Date.now()\n                this.running = false\n                const gameoverPage = document.getElementById(\"gameover-box\")\n                gameoverPage.style.opacity = \"0\";   \n            }  \n                this.restart(this.currentLevel)\n        }\n        else if(!this.running && !this.highestScoreMode){\n            this.play()\n        }\n    }\n\n    keyUpHandler(e) {\n        this.keysTracker[e.keyCode] = false;\n    }\n    \n    registerEvents() {\n        this.keyDownHandler = this.keyDownHandler.bind(this);\n        this.keyUpHandler = this.keyUpHandler.bind(this);\n        document.addEventListener('keydown', (e) => {\n            this.keyDownHandler(e)\n        });\n        document.addEventListener('keyup', (e) => {\n            this.keyUpHandler(e)\n        });\n    }\n\n    drawTimer(){\n        this.timer = Math.floor((Date.now() - this.startTime)/1000)\n        if (this.textTimer === 0 && this.currentLevel === 0){this.timer = 0}\n        this.ctx.font = '20px Dosis'\n        this.ctx.fillStyle = 'rgb(255, 255, 255)';\n        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20)\n    }\n\n    drawCounter(){\n        let counterText = `${this.numTargets}/${this.totalTarget}`\n        this.ctx.font = '20px Dosis'\n        this.ctx.fillStyle = 'rgb(255, 255, 255)';\n        this.ctx.fillText(counterText, this.canvas.width -60, 50)\n     }\n\n    animate() {\n        this.ctx.font = 'Dosis'\n        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)\n        this.level.animate(this.ctx, this.player)\n    \n        this.player.animate(this.ctx, this.keysTracker)\n        this.numTargets = this.level.numTargets\n        this.drawTimer()\n        this.drawText()\n        this.drawCounter()\n        if (this.numTargets === 0 && !this.gameoverTracker) {\n            this.currentLevel += 1;\n            this.levelUp = true;\n            this.restart(this.currentLevel)\n        }\n        if (this.running) {\n            requestAnimationFrame(this.animate.bind(this))\n        }\n    }\n\n\n    levelUpText(){\n        this.textTimer += 1\n        this.ctx.save()\n        this.ctx.font = '38px Dosis'\n        this.ctx.fillStyle = 'white';\n        this.ctx.strokeStyle = 'yellow'\n        this.ctx.fillText(`${_util__WEBPACK_IMPORTED_MODULE_2__[\"levelMessages\"][this.currentLevel]}`, this.canvas.width / 3, 100)\n        this.ctx.strokeText(`${_util__WEBPACK_IMPORTED_MODULE_2__[\"levelMessages\"][this.currentLevel]}`, this.canvas.width / 3, 100)\n        this.ctx.font = '28px Dosis';\n        this.ctx.strokeStyle = 'skyblue'\n        this.ctx.fillText(`${_util__WEBPACK_IMPORTED_MODULE_2__[\"levelInstruction\"][this.currentLevel]}`, 200, 140);\n        this.ctx.strokeText(`${_util__WEBPACK_IMPORTED_MODULE_2__[\"levelInstruction\"][this.currentLevel]}`, 200, 140);\n        this.ctx.restore();\n    }\n\n    drawText(){\n        if (this.textTimer ===0) {\n            this.ctx.save()\n            this.ctx.font = '25px Dosis'\n            // this.ctx.strokeStyle = 'blue'\n            this.ctx.fillStyle = 'rgba(255,255,255)';\n            this.ctx.shadowColor = 'rgba(0,0,0,0.7)'\n            this.ctx.shadowBlur = 5\n            this.ctx.fillText(\"Press the ↑ ← → buttons on your keyboard to navigate your cube\", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)\n            // this.ctx.strokeText(\"Press the ↑ ← → buttons on your keyboard to navigate your cube\", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)\n            this.ctx.restore();\n        }\n        if ((this.textTimer < 100 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){\n            this.levelUpText()\n        } else {\n            this.textTimer += 1\n        }\n    }\n\n    gameover(){\n        return this.currentLevel >= Object.keys(_util__WEBPACK_IMPORTED_MODULE_2__[\"LEVELS\"]).length\n    }\n\n    gameoverFrame(){\n       \n        let gameScore = this.timer\n        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)\n        const gamePage = document.getElementById('game-page')\n        gamePage.style.backgroundColor = 'orange'\n        const gameoverBox = document.getElementById('gameover-box')\n        gameoverBox.style.transition = 'all 1s ease-in-out;'\n        gameoverBox.style.opacity = 1;\n        // gameoverBox.style.display = block;\n        let gameoverMessageP = document.createElement('p')\n        let minutes = Math.floor(this.timer / 60)\n        let seconds = Math.floor(this.timer % 60)\n        gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all the levels. Congratulations!`\n        const  gameoverMessage = document.getElementById(\"gameover-messsage\")\n        gameoverMessage.innerHTML = '';\n        gameoverMessage.appendChild(gameoverMessageP)\n        document.getElementById(\"you-won-message\").style.animation = \"shake 0.5s\";\n        let highScores = []\n        _util__WEBPACK_IMPORTED_MODULE_2__[\"scores\"].forEach(el => {\n            highScores.push(el.score) \n        })\n\n        let lowestRecord = Math.max(...highScores)\n        let name = ''\n        if(gameScore < lowestRecord) {\n            this.highestScoreMode = true\n            let recordSubmissionDiv = document.getElementById(\"record-submission\") \n            recordSubmissionDiv.innerHTML = ''\n            let highScoreMessageP = document.createElement('p')\n            highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our high score board ☺' \n            recordSubmissionDiv.appendChild(highScoreMessageP)\n            let nameInput = document.createElement('input')\n            nameInput.type = 'text'\n            nameInput.placeholder = 'Please enter your name here'\n            recordSubmissionDiv.appendChild(nameInput)\n            nameInput.addEventListener('change', e => {\n                name = e.currentTarget.value;\n              });\n            let submitButton = document.createElement('button')\n            submitButton.innerHTML = 'Submit' \n            recordSubmissionDiv.appendChild(submitButton)\n            submitButton.addEventListener('click', e => {\n                this.highestScoreMode = false\n                Object(_util__WEBPACK_IMPORTED_MODULE_2__[\"submitScore\"])(name, gameScore)\n            })\n        }  \n    }\n\n\n    // fetchScores() {\n    //     firebase.database().ref('scores').orderByChild('score').limitToFirst(4)\n    // }\n\n}\n\n//# sourceURL=webpack:///./src/game.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Game; });
+/* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player */ "./src/player.js");
+/* harmony import */ var _level__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./level */ "./src/level.js");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util */ "./src/util.js");
+
+
+
+
+class Game {
+
+    constructor(canvas){
+        this.ctx = canvas.getContext("2d");
+        this.canvas = canvas
+        this.dimensions = { width: canvas.width, height: canvas.height };
+        this.keysTracker = {};
+        this.running = false;
+        this.currentLevel = 0 
+        this.totalTarget = 0 
+        this.registerEvents();
+        this.restart(this.currentLevel);
+        this.levelUp = false;
+        this.gameoverTracker = false;
+        this.scores = [];
+        this.highestScoreMode = false; 
+        this.playingMusic = false;
+        // playAudio();
+    }
+
+    play() {
+        // debugger
+        this.running = true
+        // debugger
+        if (Object.values(this.keysTracker).length > 0 && Object.values(this.keysTracker).some(val => val ===true))
+        {this.animate()};
+      }
+
+    restart(currentLevel) {
+        // debugger
+        // console.log(this.currentLevel)
+        this.gameoverTracker = false
+        if (!this.levelUp){
+            this.running = false;
+        }
+        this.startTime = this.startTime || Date.now();
+        this.textTimer = 0
+        // renderScores()
+        // renderScores()
+        // fetchScores()
+        this.numTargets = 1
+        if(this.gameover()){
+            // debugger
+            this.currentLevel = 0
+            this.gameoverTracker = true
+            this.gameoverFrame()
+        } else {
+            this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions, currentLevel);
+            this.player = new _player__WEBPACK_IMPORTED_MODULE_0__["default"](this.dimensions, this.keysTracker, this.level);
+            this.totalTarget = _util__WEBPACK_IMPORTED_MODULE_2__["LEVELS"][this.currentLevel].flat().filter(el => el ===2).length  
+            // debugger
+            this.animate();
+        }
+    }
+
+    keyDownHandler(e) {
+        this.keysTracker[e.keyCode] = true;
+        if (this.keysTracker["82"]&& !this.highestScoreMode){
+            if (this.gameoverTracker){
+                this.currentLevel = 0
+                this.startTime = Date.now()
+                this.running = false
+                const gameoverPage = document.getElementById("gameover-box")
+                gameoverPage.style.opacity = "0";   
+            }  
+                this.restart(this.currentLevel)
+        }
+        else if(!this.running && !this.highestScoreMode){
+            this.play()
+        }
+    }
+
+    keyUpHandler(e) {
+        this.keysTracker[e.keyCode] = false;
+    }
+    
+    registerEvents() {
+        this.keyDownHandler = this.keyDownHandler.bind(this);
+        this.keyUpHandler = this.keyUpHandler.bind(this);
+        document.addEventListener('keydown', (e) => {
+            this.keyDownHandler(e)
+        });
+        document.addEventListener('keyup', (e) => {
+            this.keyUpHandler(e)
+        });
+    }
+
+    drawTimer(){
+        this.timer = Math.floor((Date.now() - this.startTime)/1000)
+        if (this.textTimer === 0 && this.currentLevel === 0){this.timer = 0}
+        this.ctx.font = '20px Dosis'
+        this.ctx.fillStyle = 'rgb(255, 255, 255)';
+        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20)
+    }
+
+    drawCounter(){
+        let counterText = `${this.numTargets}/${this.totalTarget}`
+        this.ctx.font = '20px Dosis'
+        this.ctx.fillStyle = 'rgb(255, 255, 255)';
+        this.ctx.fillText(counterText, this.canvas.width -60, 50)
+     }
+
+    animate() {
+        this.ctx.font = 'Dosis'
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        this.level.animate(this.ctx, this.player)
+    
+        this.player.animate(this.ctx, this.keysTracker)
+        this.numTargets = this.level.numTargets
+        this.drawTimer()
+        this.drawText()
+        this.drawCounter()
+        if (this.numTargets === 0 && !this.gameoverTracker) {
+            this.currentLevel += 1;
+            this.levelUp = true;
+            this.restart(this.currentLevel)
+        }
+        if (this.running) {
+            requestAnimationFrame(this.animate.bind(this))
+        }
+    }
+
+
+    levelUpText(){
+        this.textTimer += 1
+        this.ctx.save()
+        this.ctx.font = '38px Dosis'
+        this.ctx.fillStyle = 'white';
+        this.ctx.strokeStyle = 'yellow'
+        this.ctx.fillText(`${_util__WEBPACK_IMPORTED_MODULE_2__["levelMessages"][this.currentLevel]}`, this.canvas.width / 3, 100)
+        this.ctx.strokeText(`${_util__WEBPACK_IMPORTED_MODULE_2__["levelMessages"][this.currentLevel]}`, this.canvas.width / 3, 100)
+        this.ctx.font = '28px Dosis';
+        this.ctx.strokeStyle = 'skyblue'
+        this.ctx.fillText(`${_util__WEBPACK_IMPORTED_MODULE_2__["levelInstruction"][this.currentLevel]}`, 200, 140);
+        this.ctx.strokeText(`${_util__WEBPACK_IMPORTED_MODULE_2__["levelInstruction"][this.currentLevel]}`, 200, 140);
+        this.ctx.restore();
+    }
+
+    drawText(){
+        if (this.textTimer ===0) {
+            this.ctx.save()
+            this.ctx.font = '25px Dosis'
+            // this.ctx.strokeStyle = 'blue'
+            this.ctx.fillStyle = 'rgba(255,255,255)';
+            this.ctx.shadowColor = 'rgba(0,0,0,0.7)'
+            this.ctx.shadowBlur = 5
+            this.ctx.fillText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
+            // this.ctx.strokeText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
+            this.ctx.restore();
+        }
+        if ((this.textTimer < 100 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
+            this.levelUpText()
+        } else {
+            this.textTimer += 1
+        }
+    }
+
+    gameover(){
+        return this.currentLevel >= Object.keys(_util__WEBPACK_IMPORTED_MODULE_2__["LEVELS"]).length
+    }
+
+    gameoverFrame(){
+       
+        let gameScore = this.timer
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        const gamePage = document.getElementById('game-page')
+        gamePage.style.backgroundColor = 'orange'
+        const gameoverBox = document.getElementById('gameover-box')
+        gameoverBox.style.transition = 'all 1s ease-in-out;'
+        gameoverBox.style.opacity = 1;
+        // gameoverBox.style.display = block;
+        let gameoverMessageP = document.createElement('p')
+        let minutes = Math.floor(this.timer / 60)
+        let seconds = Math.floor(this.timer % 60)
+        gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all the levels. Congratulations!`
+        const  gameoverMessage = document.getElementById("gameover-messsage")
+        gameoverMessage.innerHTML = '';
+        gameoverMessage.appendChild(gameoverMessageP)
+        document.getElementById("you-won-message").style.animation = "shake 0.5s";
+        let highScores = []
+        _util__WEBPACK_IMPORTED_MODULE_2__["scores"].forEach(el => {
+            highScores.push(el.score) 
+        })
+
+        let lowestRecord = Math.max(...highScores)
+        let name = ''
+        if(gameScore < lowestRecord) {
+            this.highestScoreMode = true
+            let recordSubmissionDiv = document.getElementById("record-submission") 
+            recordSubmissionDiv.innerHTML = ''
+            let highScoreMessageP = document.createElement('p')
+            highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our high score board ☺' 
+            recordSubmissionDiv.appendChild(highScoreMessageP)
+            let nameInput = document.createElement('input')
+            nameInput.type = 'text'
+            nameInput.placeholder = 'Please enter your name here'
+            recordSubmissionDiv.appendChild(nameInput)
+            nameInput.addEventListener('change', e => {
+                name = e.currentTarget.value;
+              });
+            let submitButton = document.createElement('button')
+            submitButton.innerHTML = 'Submit' 
+            recordSubmissionDiv.appendChild(submitButton)
+            submitButton.addEventListener('click', e => {
+                this.highestScoreMode = false
+                Object(_util__WEBPACK_IMPORTED_MODULE_2__["submitScore"])(name, gameScore)
+            })
+        }  
+    }
+
+
+    // fetchScores() {
+    //     firebase.database().ref('scores').orderByChild('score').limitToFirst(4)
+    // }
+
+}
 
 /***/ }),
 
@@ -106,7 +330,32 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game */ \"./src/game.js\");\n \n\ndocument.addEventListener('DOMContentLoaded', () => {\n    const canvas = document.getElementById(\"game-canvas\");\n    new _game__WEBPACK_IMPORTED_MODULE_0__[\"default\"](canvas)\n})\n\nconst musicButton = document.getElementById('music-button')\nconst musicIcon = document.getElementById('music-icon')\nconst music = new Audio('assets/bensound-summer.mp3') \nlet playingMusic = false\nmusicButton.addEventListener('click', handleMusic)\n\nfunction handleMusic() {\n    if (playingMusic){\n        playingMusic = false;\n        musicIcon.src = \"./assets/play-music.png\"\n        music.pause()\n    } else {\n        playingMusic = true\n        musicIcon.src = \"./assets/stop-music.png\"\n        music.play()\n    }\n}\n\n//# sourceURL=webpack:///./src/index.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game */ "./src/game.js");
+ 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById("game-canvas");
+    new _game__WEBPACK_IMPORTED_MODULE_0__["default"](canvas)
+})
+
+const musicButton = document.getElementById('music-button')
+const musicIcon = document.getElementById('music-icon')
+const music = new Audio('../assets/bensound-summer.mp3') 
+let playingMusic = false
+musicButton.addEventListener('click', handleMusic)
+
+function handleMusic() {
+    if (playingMusic){
+        playingMusic = false;
+        musicIcon.src = "../assets/play-music.png"
+        music.pause()
+    } else {
+        playingMusic = true
+        musicIcon.src = "../assets/stop-music.png"
+        music.play()
+    }
+}
 
 /***/ }),
 
@@ -118,7 +367,103 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _gam
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Level; });\n/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ \"./src/util.js\");\n\n\n\nclass Level {\n\n    constructor(dimensions, currentLevel){\n        this.dimensions = dimensions;\n        this.level = JSON.parse(JSON.stringify(_util__WEBPACK_IMPORTED_MODULE_0__[\"LEVELS\"]))[currentLevel];\n        this.currentLevel = currentLevel;\n        // this.bricks = [];\n        this.bricks = {};\n        this.targetLength = 10;\n        this.targets = {};\n        this.numTargets = 0;\n        this.color = '0,92,175';\n        // debugger\n    };\n \n    drawLevel(ctx, player) {\n        const wallWidth = this.dimensions.width / this.level[0].length\n        const wallHeight = this.dimensions.height / this.level.length\n        // debugger\n        let numBricks = Object(_util__WEBPACK_IMPORTED_MODULE_0__[\"myCount\"])(this.level.flat(), 1)\n        this.numTargets = Object(_util__WEBPACK_IMPORTED_MODULE_0__[\"myCount\"])(this.level.flat(), 2)\n        for(let row = 0; row < this.level.length; row ++){\n            for(let col= 0; col < this.level[0].length; col++){\n                let leftStart = col * wallWidth;\n                let upStart = row * wallHeight\n                \n                if(this.level[row][col] === 1){\n                    // debugger\n                    // const image = document.getElementById('ice-image');\n                    const image = new Image();\n                    image.src = './assets/brick.png';\n                    // debugger\n                    image.onload = function () {\n                        ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);\n                    }\n                    ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);\n                   this.bricks[[row, col]] = {left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)}\n                }\n                else if(this.level[row][col] === 2){\n                    // debugger\n                    if(col === 0) {\n                        leftStart += _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].BOARDER_WIDTH\n                    }\n                    if(row === this.level.length){\n                        upStart -= _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].BOARDER_WIDTH\n                    }\n                    let targetColor\n                    // debugger\n                    let pos = row + ',' + col\n                    if (Object.keys(this.targets).includes(pos)){\n                        targetColor = this.targets[[row,col]]\n                    } else {\n                        targetColor = this.randomColor()\n                    }\n                    ctx.fillStyle = `rgb(${targetColor})`\n                    ctx.fillRect(leftStart, upStart, this.targetLength, this.targetLength)\n                    let currentTarget = {left : leftStart, top:upStart, right : (leftStart + this.targetLength), bottom : (upStart + this.targetLength), color: targetColor}\n                    this.targets[[row, col]] = targetColor\n                    if(Object(_util__WEBPACK_IMPORTED_MODULE_0__[\"_overlap\"])(player.bounds(), currentTarget)){\n                        this.level[row][col] = 0\n                        this.color = currentTarget.color\n                        const gamePage = document.getElementById('game-page')\n                        gamePage.style.backgroundColor = `rgba(${this.color}, 0.6)`\n                    }\n                }\n            }\n        }\n        // debugger\n    }\n\n    drawBackground(ctx){\n        // debugger\n        ctx.fillStyle = \"rgba(255,255,255,0.4)\"\n        ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);\n        // ctx.fillStyle = `rgba(${this.color}, 0.2)`;\n        // ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);\n        \n    }\n\n    randomColor(){\n        let num = Math.floor(Math.random() * 15)\n        return _util__WEBPACK_IMPORTED_MODULE_0__[\"colors\"][num]\n    }\n\n    animate(ctx, player) {\n        this.drawBackground(ctx);\n        this.drawLevel(ctx, player);    \n    }\n   \n\n}\n\n//# sourceURL=webpack:///./src/level.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Level; });
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
+
+
+
+class Level {
+
+    constructor(dimensions, currentLevel){
+        this.dimensions = dimensions;
+        this.level = JSON.parse(JSON.stringify(_util__WEBPACK_IMPORTED_MODULE_0__["LEVELS"]))[currentLevel];
+        this.currentLevel = currentLevel;
+        // this.bricks = [];
+        this.bricks = {};
+        this.targetLength = 10;
+        this.targets = {};
+        this.numTargets = 0;
+        this.color = '0,92,175';
+        // debugger
+    };
+ 
+    drawLevel(ctx, player) {
+        const wallWidth = this.dimensions.width / this.level[0].length
+        const wallHeight = this.dimensions.height / this.level.length
+        // debugger
+        let numBricks = Object(_util__WEBPACK_IMPORTED_MODULE_0__["myCount"])(this.level.flat(), 1)
+        this.numTargets = Object(_util__WEBPACK_IMPORTED_MODULE_0__["myCount"])(this.level.flat(), 2)
+        for(let row = 0; row < this.level.length; row ++){
+            for(let col= 0; col < this.level[0].length; col++){
+                let leftStart = col * wallWidth;
+                let upStart = row * wallHeight
+                
+                if(this.level[row][col] === 1){
+                    // debugger
+                    // const image = document.getElementById('ice-image');
+                    const image = new Image();
+                    image.src = '../assets/brick.png';
+                    // debugger
+                    image.onload = function () {
+                        ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
+                    }
+                    ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
+                   this.bricks[[row, col]] = {left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)}
+                }
+                else if(this.level[row][col] === 2){
+                    // debugger
+                    if(col === 0) {
+                        leftStart += _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH
+                    }
+                    if(row === this.level.length){
+                        upStart -= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH
+                    }
+                    let targetColor
+                    // debugger
+                    let pos = row + ',' + col
+                    if (Object.keys(this.targets).includes(pos)){
+                        targetColor = this.targets[[row,col]]
+                    } else {
+                        targetColor = this.randomColor()
+                    }
+                    ctx.fillStyle = `rgb(${targetColor})`
+                    ctx.fillRect(leftStart, upStart, this.targetLength, this.targetLength)
+                    let currentTarget = {left : leftStart, top:upStart, right : (leftStart + this.targetLength), bottom : (upStart + this.targetLength), color: targetColor}
+                    this.targets[[row, col]] = targetColor
+                    if(Object(_util__WEBPACK_IMPORTED_MODULE_0__["_overlap"])(player.bounds(), currentTarget)){
+                        this.level[row][col] = 0
+                        this.color = currentTarget.color
+                        const gamePage = document.getElementById('game-page')
+                        gamePage.style.backgroundColor = `rgba(${this.color}, 0.6)`
+                    }
+                }
+            }
+        }
+        // debugger
+    }
+
+    drawBackground(ctx){
+        // debugger
+        ctx.fillStyle = "rgba(255,255,255,0.4)"
+        ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
+        // ctx.fillStyle = `rgba(${this.color}, 0.2)`;
+        // ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
+        
+    }
+
+    randomColor(){
+        let num = Math.floor(Math.random() * 15)
+        return _util__WEBPACK_IMPORTED_MODULE_0__["colors"][num]
+    }
+
+    animate(ctx, player) {
+        this.drawBackground(ctx);
+        this.drawLevel(ctx, player);    
+    }
+   
+
+}
 
 /***/ }),
 
@@ -130,7 +475,263 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Player; });\n/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ \"./src/util.js\");\n\n\nclass Player {\n\n    constructor(dimensions, keysTracker = {}, level) {\n        this.dimensions = dimensions;\n        this.x = _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].BOARDER_WIDTH;\n        this.y = this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].EDGE //- CONSTANTS.BOARDER_WIDTH;\n        this.velX = 0;\n        this.velY = 0; \n        this.keysTracker = keysTracker;\n        this.level = level;\n        // this.onGround = false;\n        this.collisionAdj = 0;\n    }\n\n\n    drawPlayer(ctx) {\n        ctx.fillStyle = `rgb(${this.level.color})`;\n        ctx.fillRect(this.x, this.y, _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_WIDTH, _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_HEIGHT);\n    }\n\n    // pushPlayer(keysTracker){\n    //     // debugger\n    //     if (keysTracker[KEYS.UP]){\n    //         // this.onGround = false;\n    //         this.velY -= 1 * CONSTANTS.UP_SPEED \n    //         if (this.velY < -CONSTANTS.MAX_SPEED) {\n    //             this.velY = -CONSTANTS.MAX_SPEED\n    //         }\n    //     }\n    //     if (keysTracker[KEYS.LEFT]) {  \n    //         // debugger          \n    //         this.velX -= CONSTANTS.HORIZENTAL_SPEED \n    //     }\n    //     if (keysTracker[KEYS.RIGHT]){         \n    //         this.velX +=  CONSTANTS.HORIZENTAL_SPEED\n    //     }\n    // }\n\n    updatePlayer(keysTracker) {\n        if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__[\"KEYS\"].UP]){\n            // this.onGround = false;\n             this.velY -= 1 * _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].UP_SPEED \n             \n        }\n        if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__[\"KEYS\"].LEFT]) {  \n            // debugger          \n            this.velX -= _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].HORIZENTAL_SPEED \n        }\n        if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__[\"KEYS\"].RIGHT]){         \n            this.velX +=  _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].HORIZENTAL_SPEED\n        }\n        // console.log(this.x, this.y)\n        // this.onGround = false;           \n    // debugger\n        this.velX *= _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].FRICTION  \n        if(this.y < 390){\n            this.velY += _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].GRAVITY \n        }   \n        if(this.velY > 0){\n            this.velY -= _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].AIR_FRICTION \n        } else {\n            this.velY += _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].AIR_FRICTION\n        }\n        // debugger    \n        if(Math.abs(this.velX) > _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].MAX_SPEED){\n                if(this.velX > 0) {\n                    this.velX = _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].MAX_SPEED\n                } else {\n                    this.velX = - 1 * _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].MAX_SPEED\n                }\n        }\n        \n        if(Math.abs(this.velY) > _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].MAX_SPEED){\n            if(this.velY > 0) {\n                this.velY = _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].MAX_SPEED\n            } else {\n                this.velY = -1 * _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].MAX_SPEED\n            }\n        }\n\n        if (this.collideWithBrick()){\n            this.resolveCollision()\n        }\n\n    // if(this.onGround) {\n    //     this.velY = 0;\n    // }\n\n        // console.log(`velY ${this.velY}`)\n        // console.log(`this.y ${this.y}`)\n        this.x += this.velX\n        this.y += this.velY\n\n        if (this.x > this.dimensions.width - _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_WIDTH - _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].BOARDER_WIDTH) {\n            this.x = this.dimensions.width - _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_WIDTH - _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].BOARDER_WIDTH\n        }  else if (this.x < 0) {\n            this.x = _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].BOARDER_WIDTH\n        }\n        if (this.y > this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_HEIGHT) {\n            this.y = this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_HEIGHT\n        }  \n        else if (this.y < 0) {\n            this.y = 0\n        }    \n    }\n\n    bounds(){\n        return {\n            left: this.x,\n            right: (this.x + _util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_WIDTH), \n            top: this.y, \n            bottom: (this.y +_util__WEBPACK_IMPORTED_MODULE_0__[\"CONSTANTS\"].PLAYER_HEIGHT)\n        }\n    }\n\n    animate(ctx, keysTracker) {\n        this.updatePlayer(keysTracker);\n        // this.pushPlayer(keysTracker);\n        this.drawPlayer(ctx);\n      \n    }\n\n    collideWithBrick(){\n        let collision = false;\n        // debugger\n        Object.values(this.level.bricks).forEach(\n            brick => {\n            if (Object(_util__WEBPACK_IMPORTED_MODULE_0__[\"_overlap\"])(brick, this.bounds())){\n                collision = true;\n            }\n            })\n        return collision;\n    }\n\n    // collisionDir(){\n    //     let collisionType = [null, null];\n    //     if(!this.collideWithBrick()){return collisionType}\n\n    //     const _overlapDir = (rect1, rect2) => {\n    //         if (rect1.right >= rect2.left && rect1.right <= (rect2.left + rect2.right)/2){\n    //             collisionType[0] =\"left\"\n    //         } else if (rect1.left <= rect2.right && rect1.left <= (rect2.left + rect2.right)/2){\n    //             collisionType[0] = \"right\"\n    //         }\n    //         if(rect1.bottom <= rect2.top && rect1.bottom >= (rect2.top + rect2.bottom)/2){\n    //             collisionType[1] = \"top\"\n    //         } else if (rect1.top <= rect2.bottom && rect1.top <= (rect2.top + rect2.bottom)/2) {\n    //             collisionType[1] = \"bottom\"\n    //         }\n    //     }\n\n    //     this.level.bricks.forEach(brick => {\n    //         _overlapDir(this.bounds(), brick)\n    //     })\n    //     console.log(collisionType)\n    //     return collisionType;\n    // }\n\n    collisionDir(){\n        let collisionDir = [null, null]\n        const _overlapDir = (rect1, rect2) => {\n            const width1 = rect1.right - rect1.left\n            const width2 = rect2.right - rect2.left\n            const height1 = rect1.bottom - rect1.top\n            const height2 = rect2.bottom - rect2.top\n            const centerDistX = (rect1.left + rect1.right)/2 - (rect2.left + rect2.right)/2\n            const centerDistY = (rect1.bottom + rect1.top)/2 - (rect2.bottom + rect2.top)/2\n            const avrWidth = (width1 + width2)/2\n            const avrHeight = (height1 + height2)/2\n            const distX = avrWidth - Math.abs(centerDistX)\n            const distY = avrHeight - Math.abs(centerDistY)\n\n           \n            if (Math.abs(centerDistX) < avrWidth && Math.abs(centerDistY) < avrHeight){\n                if (distX >= distY){\n                    if (centerDistY > 0){\n                        collisionDir[1] = \"top\";\n                        this.collisionAdj = distY\n                    }\n                    else {\n                        collisionDir[1] = \"bottom\";\n                        // rect1.y -= distY;\n                       \n                        // console.log(rect1.y)\n                        this.collisionAdj = -distY\n                    }\n                }\n                else {\n                    if(centerDistX < 0){\n                        collisionDir[0] = \"right\";\n                        this.collisionAdj = -distX\n                    } else {\n                        collisionDir[0] = \"left\";\n                        this.collisionAdj = distX\n                    }\n                }\n            }\n        }\n\n        Object.values(this.level.bricks).forEach(\n            brick => {\n            _overlapDir(this.bounds(), brick)\n        })\n        return collisionDir\n    }\n\n    resolveCollision(){\n        // console.log(this.collisionDir())\n        if (this.collideWithBrick()){\n            if (this.collisionDir()[0] === \"right\"){\n                this.x += this.collisionAdj\n                if(this.velX !== 0) {\n                    this.velX *= -1\n                } else {\n                    this.velX = 0.1\n                }\n            }\n\n            if (this.collisionDir()[0] === \"left\"){\n                this.x += this.collisionAdj\n                if(this.velX !== 0) {\n                    this.velX *= -1\n                } else {\n                    this.velX = -0.1\n                }\n            }\n            if (this.collisionDir()[1] === \"top\"){\n                    this.y += this.collisionAdj\n                    this.velY *= -1\n            }\n            if (this.collisionDir()[1] === \"bottom\"){\n                this.y += this.collisionAdj\n                // this.onGround = true;\n                 if(this.velY<0 && this.velY > -2){\n                this.velY =0 \n               } else {\n                     this.velY *= -1\n                }\n                 this.bottomCollision = true \n\n            }\n            this.collisionAdj = 0\n        }\n\n    }\n\n\n    \n\n}\n\n\n\n//# sourceURL=webpack:///./src/player.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Player; });
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
+
+
+class Player {
+
+    constructor(dimensions, keysTracker = {}, level) {
+        this.dimensions = dimensions;
+        this.x = _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH;
+        this.y = this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].EDGE //- CONSTANTS.BOARDER_WIDTH;
+        this.velX = 0;
+        this.velY = 0; 
+        this.keysTracker = keysTracker;
+        this.level = level;
+        // this.onGround = false;
+        this.collisionAdj = 0;
+    }
+
+
+    drawPlayer(ctx) {
+        ctx.fillStyle = `rgb(${this.level.color})`;
+        ctx.fillRect(this.x, this.y, _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_WIDTH, _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_HEIGHT);
+    }
+
+    // pushPlayer(keysTracker){
+    //     // debugger
+    //     if (keysTracker[KEYS.UP]){
+    //         // this.onGround = false;
+    //         this.velY -= 1 * CONSTANTS.UP_SPEED 
+    //         if (this.velY < -CONSTANTS.MAX_SPEED) {
+    //             this.velY = -CONSTANTS.MAX_SPEED
+    //         }
+    //     }
+    //     if (keysTracker[KEYS.LEFT]) {  
+    //         // debugger          
+    //         this.velX -= CONSTANTS.HORIZENTAL_SPEED 
+    //     }
+    //     if (keysTracker[KEYS.RIGHT]){         
+    //         this.velX +=  CONSTANTS.HORIZENTAL_SPEED
+    //     }
+    // }
+
+    updatePlayer(keysTracker) {
+        if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].UP]){
+            // this.onGround = false;
+             this.velY -= 1 * _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].UP_SPEED 
+             
+        }
+        if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].LEFT]) {  
+            // debugger          
+            this.velX -= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].HORIZENTAL_SPEED 
+        }
+        if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].RIGHT]){         
+            this.velX +=  _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].HORIZENTAL_SPEED
+        }
+        // console.log(this.x, this.y)
+        // this.onGround = false;           
+    // debugger
+        this.velX *= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].FRICTION  
+        if(this.y < 390){
+            this.velY += _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].GRAVITY 
+        }   
+        if(this.velY > 0){
+            this.velY -= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].AIR_FRICTION 
+        } else {
+            this.velY += _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].AIR_FRICTION
+        }
+        // debugger    
+        if(Math.abs(this.velX) > _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED){
+                if(this.velX > 0) {
+                    this.velX = _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED
+                } else {
+                    this.velX = - 1 * _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED
+                }
+        }
+        
+        if(Math.abs(this.velY) > _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED){
+            if(this.velY > 0) {
+                this.velY = _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED
+            } else {
+                this.velY = -1 * _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED
+            }
+        }
+
+        if (this.collideWithBrick()){
+            this.resolveCollision()
+        }
+
+    // if(this.onGround) {
+    //     this.velY = 0;
+    // }
+
+        // console.log(`velY ${this.velY}`)
+        // console.log(`this.y ${this.y}`)
+        this.x += this.velX
+        this.y += this.velY
+
+        if (this.x > this.dimensions.width - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_WIDTH - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH) {
+            this.x = this.dimensions.width - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_WIDTH - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH
+        }  else if (this.x < 0) {
+            this.x = _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH
+        }
+        if (this.y > this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_HEIGHT) {
+            this.y = this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_HEIGHT
+        }  
+        else if (this.y < 0) {
+            this.y = 0
+        }    
+    }
+
+    bounds(){
+        return {
+            left: this.x,
+            right: (this.x + _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_WIDTH), 
+            top: this.y, 
+            bottom: (this.y +_util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_HEIGHT)
+        }
+    }
+
+    animate(ctx, keysTracker) {
+        this.updatePlayer(keysTracker);
+        // this.pushPlayer(keysTracker);
+        this.drawPlayer(ctx);
+      
+    }
+
+    collideWithBrick(){
+        let collision = false;
+        // debugger
+        Object.values(this.level.bricks).forEach(
+            brick => {
+            if (Object(_util__WEBPACK_IMPORTED_MODULE_0__["_overlap"])(brick, this.bounds())){
+                collision = true;
+            }
+            })
+        return collision;
+    }
+
+    // collisionDir(){
+    //     let collisionType = [null, null];
+    //     if(!this.collideWithBrick()){return collisionType}
+
+    //     const _overlapDir = (rect1, rect2) => {
+    //         if (rect1.right >= rect2.left && rect1.right <= (rect2.left + rect2.right)/2){
+    //             collisionType[0] ="left"
+    //         } else if (rect1.left <= rect2.right && rect1.left <= (rect2.left + rect2.right)/2){
+    //             collisionType[0] = "right"
+    //         }
+    //         if(rect1.bottom <= rect2.top && rect1.bottom >= (rect2.top + rect2.bottom)/2){
+    //             collisionType[1] = "top"
+    //         } else if (rect1.top <= rect2.bottom && rect1.top <= (rect2.top + rect2.bottom)/2) {
+    //             collisionType[1] = "bottom"
+    //         }
+    //     }
+
+    //     this.level.bricks.forEach(brick => {
+    //         _overlapDir(this.bounds(), brick)
+    //     })
+    //     console.log(collisionType)
+    //     return collisionType;
+    // }
+
+    collisionDir(){
+        let collisionDir = [null, null]
+        const _overlapDir = (rect1, rect2) => {
+            const width1 = rect1.right - rect1.left
+            const width2 = rect2.right - rect2.left
+            const height1 = rect1.bottom - rect1.top
+            const height2 = rect2.bottom - rect2.top
+            const centerDistX = (rect1.left + rect1.right)/2 - (rect2.left + rect2.right)/2
+            const centerDistY = (rect1.bottom + rect1.top)/2 - (rect2.bottom + rect2.top)/2
+            const avrWidth = (width1 + width2)/2
+            const avrHeight = (height1 + height2)/2
+            const distX = avrWidth - Math.abs(centerDistX)
+            const distY = avrHeight - Math.abs(centerDistY)
+
+           
+            if (Math.abs(centerDistX) < avrWidth && Math.abs(centerDistY) < avrHeight){
+                if (distX >= distY){
+                    if (centerDistY > 0){
+                        collisionDir[1] = "top";
+                        this.collisionAdj = distY
+                    }
+                    else {
+                        collisionDir[1] = "bottom";
+                        // rect1.y -= distY;
+                       
+                        // console.log(rect1.y)
+                        this.collisionAdj = -distY
+                    }
+                }
+                else {
+                    if(centerDistX < 0){
+                        collisionDir[0] = "right";
+                        this.collisionAdj = -distX
+                    } else {
+                        collisionDir[0] = "left";
+                        this.collisionAdj = distX
+                    }
+                }
+            }
+        }
+
+        Object.values(this.level.bricks).forEach(
+            brick => {
+            _overlapDir(this.bounds(), brick)
+        })
+        return collisionDir
+    }
+
+    resolveCollision(){
+        // console.log(this.collisionDir())
+        if (this.collideWithBrick()){
+            if (this.collisionDir()[0] === "right"){
+                this.x += this.collisionAdj
+                if(this.velX !== 0) {
+                    this.velX *= -1
+                } else {
+                    this.velX = 0.1
+                }
+            }
+
+            if (this.collisionDir()[0] === "left"){
+                this.x += this.collisionAdj
+                if(this.velX !== 0) {
+                    this.velX *= -1
+                } else {
+                    this.velX = -0.1
+                }
+            }
+            if (this.collisionDir()[1] === "top"){
+                    this.y += this.collisionAdj
+                    this.velY *= -1
+            }
+            if (this.collisionDir()[1] === "bottom"){
+                this.y += this.collisionAdj
+                // this.onGround = true;
+                 if(this.velY<0 && this.velY > -2){
+                this.velY =0 
+               } else {
+                     this.velY *= -1
+                }
+                 this.bottomCollision = true 
+
+            }
+            this.collisionAdj = 0
+        }
+
+    }
+
+
+    
+
+}
+
+
 
 /***/ }),
 
@@ -142,8 +743,220 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"CONSTANTS\", function() { return CONSTANTS; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"KEYS\", function() { return KEYS; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"LEVELS\", function() { return LEVELS; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"levelMessages\", function() { return levelMessages; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"levelInstruction\", function() { return levelInstruction; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"colors\", function() { return colors; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"_overlap\", function() { return _overlap; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"myCount\", function() { return myCount; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"scores\", function() { return scores; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"renderScores\", function() { return renderScores; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"submitScore\", function() { return submitScore; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"playAudio\", function() { return playAudio; });\n\nconst CONSTANTS = {\n    GRAVITY: 0.8,\n    FRICTION: 0.8,\n    AIR_FRICTION: 0.4,\n    PLAYER_WIDTH: 15,\n    PLAYER_HEIGHT: 15,\n    UP_SPEED: 2,\n    HORIZENTAL_SPEED: 1,\n    MAX_SPEED: 4,\n    EDGE: 10,\n    BOARDER_WIDTH : 0\n}\n\nconst KEYS = {\n    UP: 38,\n    LEFT: 37,\n    RIGHT: 39\n}\n\nconst LEVELS = {\n    0: [\n        [1,1,1,1,1,0,0],\n        [0,0,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [1,1,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [2,0,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [2,0,1,1,1,0,0]\n    ],\n    1: [\n        [1,1,1,1,1,0,0],\n        [0,0,0,0,0,0,0],\n        [1,1,0,0,0,0,0],\n        [0,0,0,0,0,0,1],\n        [0,0,0,0,0,1,1],\n        [1,1,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [0,0,0,0,0,0,0],\n        [2,0,0,0,0,0,0],\n        [0,0,1,1,1,0,0]\n    ]\n}\n\nconst levelMessages = {\n    0: \"Level 1\",\n    1: \"Level 2\"\n}\n\nconst levelInstruction = {\n    0: \"Have Fun!\",\n    1: \"Level up. Great Job!\"\n}\n\nconst colors = {\n    0: \"255, 186, 132\",\n    1: \"98, 41, 84\",\n    2: \"137, 145, 107\",\n    3: \"145, 180, 147\",\n    4: \"102, 186, 183\",\n    5: \"30, 136, 168\",\n    6: \"123, 144, 210\",\n    7: \"155, 144, 194\",\n    8: \"238, 169, 169\",\n    9: \"93, 172, 129\" ,\n    10: \"24, 60, 138\",\n    11: \"208, 16, 76\",\n    12: \"253, 153, 102\",\n    13: \"190, 194, 63\",\n    14: \"180, 129, 187\"\n}\n\n\nconst _overlap = (rect1, rect2) => {\n    if (rect1.left > rect2.right || rect1.right < rect2.left) {\n        return false;\n    }\n    if (rect1.top > rect2.bottom || rect1.bottom < rect2.top){\n        return false;\n    }\n    return true;\n}\n\nconst myCount = (arr, target) => {\n    return arr.filter(el => el === target).length\n}\n\n// export const fetchScores = () => {\n//     // const scores = []\n//    let scores\n//    let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)\n//    fetchedData.on('value', dataSnapshot => {\n//         scores = dataSnapshot.val()\n//    })\n//    let keys = Object.keys(scores)\n// //    debugger\n// //    let vals = []\n// //    scores.forEach(el => {\n// //        vals.push(Object.values(el))\n// //    })\n//    return scores\n// }\n\n// let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)\n\n\n\n// fetchedData.on('child_added', dataSnapshot => {\n//     console.log(dataSnapshot.val())\n//     scores.push(dataSnapshot.val())\n//         // scores = dataSnapshot.val()\n// //         console.log(dataSnapshot.val())\n// })\n\n// export async function fetchScores (){\n//     let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)\n//     let valsObj = fetchedData.once('value')\n//     let vals = Object.values(valsObj.val())\n//     return vals\n// }\n\nlet fetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)\nconst scores = []\n \nfetchScores.on('child_added', snapshot => {\n    scores.push(snapshot.val())\n    let highScoreDiv = document.getElementById('high-scores')\n    highScoreDiv.innerHTML = \"\"\n    scores.sort(compare)\n    scores.forEach(el=> {\n        let name = el.name\n        let score = el.score\n        let highScoreP = document.createElement('p')\n        highScoreP.innerHTML = `${name} ${score}s`\n        highScoreDiv.appendChild(highScoreP)\n    })\n    // console.log('hiii')\n})\n\nasync function renderScores () {\n    let asyncFetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)\n    let asyncScores = []\n    let vals = await asyncScores\n    asyncFetchScores.on('child_added', snapshot => {\n        asyncScores.push(snapshot.val())\n        let highScoreDiv = document.getElementById('high-scores')\n        highScoreDiv.innerHTML = \"\"\n        vals.sort(compare)\n        vals.forEach(el=> {\n            let name = el.name\n            let score = el.score\n            let highScoreP = document.createElement('p')\n            highScoreP.innerHTML = `${name} ${score}s`\n            highScoreDiv.appendChild(highScoreP)\n        })\n        // console.log('hiii')\n    })\n    // let highScoreDiv = document.getElementById('high-scores')\n    // highScoreDiv.innerHTML = \"\"\n    // vals.sort(compare)\n    // vals.forEach(el=> {\n    //     let name = el.name\n    //     let score = el.score\n    //     let highScoreP = document.createElement('p')\n    //     highScoreP.innerHTML = `${name} ${score}s`\n    //     highScoreDiv.appendChild(highScoreP)\n    // })\n}\n\nconst compare = (a, b) => {\n    const scoreA = a.score\n    const scoreB = b.score\n\n    let comparison = 0\n    if (scoreA > scoreB) {\n        comparison = 1\n    } else if (scoreA < scoreB){\n        comparison = -1\n    } \n    return comparison\n}\n\nconst submitScore = (name, score) => {\n    firebase.database().ref('scores').push({name: name, score: score})\n    let recordSubmissionDiv = document.getElementById(\"record-submission\") \n    recordSubmissionDiv.innerHTML = ''\n    renderScores()\n}\n\nconst music = new Audio('assets/bensound-summer.mp3') \n\nconst playAudio = () => {\n    music.play();\n  }\n\n//# sourceURL=webpack:///./src/util.js?");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CONSTANTS", function() { return CONSTANTS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KEYS", function() { return KEYS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LEVELS", function() { return LEVELS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "levelMessages", function() { return levelMessages; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "levelInstruction", function() { return levelInstruction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "colors", function() { return colors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "_overlap", function() { return _overlap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "myCount", function() { return myCount; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "scores", function() { return scores; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderScores", function() { return renderScores; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "submitScore", function() { return submitScore; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "playAudio", function() { return playAudio; });
+
+const CONSTANTS = {
+    GRAVITY: 0.8,
+    FRICTION: 0.8,
+    AIR_FRICTION: 0.4,
+    PLAYER_WIDTH: 15,
+    PLAYER_HEIGHT: 15,
+    UP_SPEED: 2,
+    HORIZENTAL_SPEED: 1,
+    MAX_SPEED: 4,
+    EDGE: 10,
+    BOARDER_WIDTH : 0
+}
+
+const KEYS = {
+    UP: 38,
+    LEFT: 37,
+    RIGHT: 39
+}
+
+const LEVELS = {
+    0: [
+        [1,1,1,1,1,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [1,1,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [2,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [2,0,1,1,1,0,0]
+    ],
+    1: [
+        [1,1,1,1,1,0,0],
+        [0,0,0,0,0,0,0],
+        [1,1,0,0,0,0,0],
+        [0,0,0,0,0,0,1],
+        [0,0,0,0,0,1,1],
+        [1,1,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [2,0,0,0,0,0,0],
+        [0,0,1,1,1,0,0]
+    ]
+}
+
+const levelMessages = {
+    0: "Level 1",
+    1: "Level 2"
+}
+
+const levelInstruction = {
+    0: "Have Fun!",
+    1: "Level up. Great Job!"
+}
+
+const colors = {
+    0: "255, 186, 132",
+    1: "98, 41, 84",
+    2: "137, 145, 107",
+    3: "145, 180, 147",
+    4: "102, 186, 183",
+    5: "30, 136, 168",
+    6: "123, 144, 210",
+    7: "155, 144, 194",
+    8: "238, 169, 169",
+    9: "93, 172, 129" ,
+    10: "24, 60, 138",
+    11: "208, 16, 76",
+    12: "253, 153, 102",
+    13: "190, 194, 63",
+    14: "180, 129, 187"
+}
+
+
+const _overlap = (rect1, rect2) => {
+    if (rect1.left > rect2.right || rect1.right < rect2.left) {
+        return false;
+    }
+    if (rect1.top > rect2.bottom || rect1.bottom < rect2.top){
+        return false;
+    }
+    return true;
+}
+
+const myCount = (arr, target) => {
+    return arr.filter(el => el === target).length
+}
+
+// export const fetchScores = () => {
+//     // const scores = []
+//    let scores
+//    let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+//    fetchedData.on('value', dataSnapshot => {
+//         scores = dataSnapshot.val()
+//    })
+//    let keys = Object.keys(scores)
+// //    debugger
+// //    let vals = []
+// //    scores.forEach(el => {
+// //        vals.push(Object.values(el))
+// //    })
+//    return scores
+// }
+
+// let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+
+
+
+// fetchedData.on('child_added', dataSnapshot => {
+//     console.log(dataSnapshot.val())
+//     scores.push(dataSnapshot.val())
+//         // scores = dataSnapshot.val()
+// //         console.log(dataSnapshot.val())
+// })
+
+// export async function fetchScores (){
+//     let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+//     let valsObj = fetchedData.once('value')
+//     let vals = Object.values(valsObj.val())
+//     return vals
+// }
+
+let fetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+const scores = []
+ 
+fetchScores.on('child_added', snapshot => {
+    scores.push(snapshot.val())
+    let highScoreDiv = document.getElementById('high-scores')
+    highScoreDiv.innerHTML = ""
+    scores.sort(compare)
+    scores.forEach(el=> {
+        let name = el.name
+        let score = el.score
+        let highScoreP = document.createElement('p')
+        highScoreP.innerHTML = `${name} ${score}s`
+        highScoreDiv.appendChild(highScoreP)
+    })
+    // console.log('hiii')
+})
+
+async function renderScores () {
+    let asyncFetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+    let asyncScores = []
+    let vals = await asyncScores
+    asyncFetchScores.on('child_added', snapshot => {
+        asyncScores.push(snapshot.val())
+        let highScoreDiv = document.getElementById('high-scores')
+        highScoreDiv.innerHTML = ""
+        vals.sort(compare)
+        vals.forEach(el=> {
+            let name = el.name
+            let score = el.score
+            let highScoreP = document.createElement('p')
+            highScoreP.innerHTML = `${name} ${score}s`
+            highScoreDiv.appendChild(highScoreP)
+        })
+        // console.log('hiii')
+    })
+    // let highScoreDiv = document.getElementById('high-scores')
+    // highScoreDiv.innerHTML = ""
+    // vals.sort(compare)
+    // vals.forEach(el=> {
+    //     let name = el.name
+    //     let score = el.score
+    //     let highScoreP = document.createElement('p')
+    //     highScoreP.innerHTML = `${name} ${score}s`
+    //     highScoreDiv.appendChild(highScoreP)
+    // })
+}
+
+const compare = (a, b) => {
+    const scoreA = a.score
+    const scoreB = b.score
+
+    let comparison = 0
+    if (scoreA > scoreB) {
+        comparison = 1
+    } else if (scoreA < scoreB){
+        comparison = -1
+    } 
+    return comparison
+}
+
+const submitScore = (name, score) => {
+    firebase.database().ref('scores').push({name: name, score: score})
+    let recordSubmissionDiv = document.getElementById("record-submission") 
+    recordSubmissionDiv.innerHTML = ''
+    renderScores()
+}
+
+const music = new Audio('../assets/bensound-summer.mp3') 
+
+const playAudio = () => {
+    music.play();
+  }
 
 /***/ })
 
 /******/ });
+//# sourceMappingURL=main.js.map
