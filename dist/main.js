@@ -310,9 +310,7 @@ class Game {
     }
 
 
-    // fetchScores() {
-    //     firebase.database().ref('scores').orderByChild('score').limitToFirst(4)
-    // }
+
 
 }
 
@@ -338,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const musicButton = document.getElementById('music-button')
 const musicIcon = document.getElementById('music-icon')
 const music = new Audio('./bensound-summer.mp3') 
+music.loop = true
 let playingMusic = false
 musicButton.addEventListener('click', handleMusic)
 
@@ -733,7 +732,7 @@ class Player {
 /*!*********************!*\
   !*** ./src/util.js ***!
   \*********************/
-/*! exports provided: CONSTANTS, KEYS, LEVELS, levelInstruction, colors, _overlap, myCount, scores, renderScores, submitScore, playAudio */
+/*! exports provided: CONSTANTS, KEYS, LEVELS, levelInstruction, colors, _overlap, myCount, scores, renderScores, submitScore */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -748,7 +747,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "scores", function() { return scores; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderScores", function() { return renderScores; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "submitScore", function() { return submitScore; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "playAudio", function() { return playAudio; });
 
 const CONSTANTS = {
     GRAVITY: 0.8,
@@ -980,11 +978,6 @@ const submitScore = (name, score) => {
     renderScores()
 }
 
-const music = new Audio('./bensound-summer.mp3') 
-
-const playAudio = () => {
-    music.play();
-  }
 
 /***/ })
 

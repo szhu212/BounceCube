@@ -878,40 +878,6 @@ const myCount = (arr, target) => {
     return arr.filter(el => el === target).length
 }
 
-// export const fetchScores = () => {
-//     // const scores = []
-//    let scores
-//    let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
-//    fetchedData.on('value', dataSnapshot => {
-//         scores = dataSnapshot.val()
-//    })
-//    let keys = Object.keys(scores)
-// //    debugger
-// //    let vals = []
-// //    scores.forEach(el => {
-// //        vals.push(Object.values(el))
-// //    })
-//    return scores
-// }
-
-// let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
-
-
-
-// fetchedData.on('child_added', dataSnapshot => {
-//     console.log(dataSnapshot.val())
-//     scores.push(dataSnapshot.val())
-//         // scores = dataSnapshot.val()
-// //         console.log(dataSnapshot.val())
-// })
-
-// export async function fetchScores (){
-//     let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
-//     let valsObj = fetchedData.once('value')
-//     let vals = Object.values(valsObj.val())
-//     return vals
-// }
-
 let fetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
 const scores = []
  
@@ -927,7 +893,6 @@ fetchScores.on('child_added', snapshot => {
         highScoreP.innerHTML = `${name} ${score}s`
         highScoreDiv.appendChild(highScoreP)
     })
-    // console.log('hiii')
 })
 
 async function renderScores () {
@@ -946,18 +911,7 @@ async function renderScores () {
             highScoreP.innerHTML = `${name} ${score}s`
             highScoreDiv.appendChild(highScoreP)
         })
-        // console.log('hiii')
     })
-    // let highScoreDiv = document.getElementById('high-scores')
-    // highScoreDiv.innerHTML = ""
-    // vals.sort(compare)
-    // vals.forEach(el=> {
-    //     let name = el.name
-    //     let score = el.score
-    //     let highScoreP = document.createElement('p')
-    //     highScoreP.innerHTML = `${name} ${score}s`
-    //     highScoreDiv.appendChild(highScoreP)
-    // })
 }
 
 const compare = (a, b) => {

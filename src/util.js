@@ -228,9 +228,3 @@ export const submitScore = (name, score) => {
     recordSubmissionDiv.innerHTML = ''
     renderScores()
 }
-
-const music = new Audio('./bensound-summer.mp3') 
-
-export const playAudio = () => {
-    music.play();
-  }

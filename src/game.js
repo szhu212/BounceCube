@@ -209,8 +209,6 @@ export default class Game {
     }
 
 
-    // fetchScores() {
-    //     firebase.database().ref('scores').orderByChild('score').limitToFirst(4)
-    // }
+
 
 }

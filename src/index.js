@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const musicButton = document.getElementById('music-button')
 const musicIcon = document.getElementById('music-icon')
 const music = new Audio('./bensound-summer.mp3') 
+music.loop = true
 let playingMusic = false
 musicButton.addEventListener('click', handleMusic)
 
