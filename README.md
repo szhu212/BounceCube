@@ -5,10 +5,11 @@
 A survival game implemented with HTML Canvas and Javascript. The player can navagate his/her cube to hit all targets to clear each levels.
 
 ## Functionality
-* Navigate the cube on the stage
+* Navigate the cube on the stage with the keyboard
 * Hit to clear all targets in the current level to enter the next level
 * Press R to restart the current level
 * Change the color of the player's cube and game background to the color of the target last hit
+* If the player hits a bomb, he/she will need to restart the current level
 * Keep track of a best record board displaying the top 5 record to make the game more competitive
 * Play and pause background music
 
