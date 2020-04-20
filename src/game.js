@@ -166,12 +166,12 @@ export default class Game {
                 this.ctx.fillStyle = 'red';
                 this.ctx.strokeStyle = 'white'
                 this.ctx.fillText(
-                    "You hit the bomb, level restarted", 
+                    "Oops! You hit the bomb, level restarted", 
                     this.canvas.width / 12,this.canvas.height / 5, 
                     this.canvas.width * 5 / 6
                     )
                 this.ctx.strokeText (
-                    "You hit the bomb, level restarted", 
+                    "Oops! You hit the bomb, level restarted", 
                     this.canvas.width / 12,this.canvas.height / 5, 
                     this.canvas.width * 5 / 6
                 )
@@ -183,24 +183,6 @@ export default class Game {
         } else {
             this.textTimer += 1
         }
-        // if (this.textTimer < 200 && this.hitBomb){
-        //     this.ctx.save()
-        //     this.ctx.font = '25px Dosis'
-        //     this.ctx.fillStyle = 'red';
-        //     this.ctx.strokeStyle = 'white'
-        //     this.ctx.fillText(
-        //         "You hit the bomb, go back to the start of the current level", 
-        //         this.canvas.width / 12,this.canvas.height / 5, 
-        //         this.canvas.width * 5 / 6
-        //         )
-        //     this.ctx.strokeText (
-        //         "You hit the bomb, go back to the start of the current level", 
-        //         this.canvas.width / 12,this.canvas.height / 5, 
-        //         this.canvas.width * 5 / 6
-        //     )
-        //     this.ctx.restore();
-        //     this.textTimer += 1
-        // }
         if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false}
         console.log(this.hitBomb)
         console.log(this.textTimer)
