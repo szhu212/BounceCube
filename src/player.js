@@ -5,7 +5,7 @@ export default class Player {
     constructor(dimensions, keysTracker = {}, level) {
         this.dimensions = dimensions;
         this.x = CONSTANTS.BOARDER_WIDTH;
-        this.y = this.dimensions.height - CONSTANTS.EDGE //- CONSTANTS.BOARDER_WIDTH;
+        this.y = this.dimensions.height - CONSTANTS.EDGE 
         this.velX = 0;
         this.velY = 0; 
         this.keysTracker = keysTracker;
@@ -21,24 +21,6 @@ export default class Player {
         ctx.fillRect(this.x, this.y, CONSTANTS.PLAYER_WIDTH, CONSTANTS.PLAYER_HEIGHT);
     }
 
-    // pushPlayer(keysTracker){
-    //     // debugger
-    //     if (keysTracker[KEYS.UP]){
-    //         // this.onGround = false;
-    //         this.velY -= 1 * CONSTANTS.UP_SPEED 
-    //         if (this.velY < -CONSTANTS.MAX_SPEED) {
-    //             this.velY = -CONSTANTS.MAX_SPEED
-    //         }
-    //     }
-    //     if (keysTracker[KEYS.LEFT]) {  
-    //         // debugger          
-    //         this.velX -= CONSTANTS.HORIZENTAL_SPEED 
-    //     }
-    //     if (keysTracker[KEYS.RIGHT]){         
-    //         this.velX +=  CONSTANTS.HORIZENTAL_SPEED
-    //     }
-    // }
-
     updatePlayer(keysTracker) {
         if (keysTracker[KEYS.UP]){
             // this.onGround = false;
@@ -52,9 +34,6 @@ export default class Player {
         if (keysTracker[KEYS.RIGHT]){         
             this.velX +=  CONSTANTS.HORIZENTAL_SPEED
         }
-        // console.log(this.x, this.y)
-        // this.onGround = false;           
-    // debugger
         this.velX *= CONSTANTS.FRICTION  
         if(this.y < 390){
             this.velY += CONSTANTS.GRAVITY 
@@ -63,8 +42,7 @@ export default class Player {
             this.velY -= CONSTANTS.AIR_FRICTION 
         } else {
             this.velY += CONSTANTS.AIR_FRICTION
-        }
-        // debugger    
+        }   
         if(Math.abs(this.velX) > CONSTANTS.MAX_SPEED){
                 if(this.velX > 0) {
                     this.velX = CONSTANTS.MAX_SPEED

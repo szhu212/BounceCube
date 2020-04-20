@@ -7,21 +7,17 @@ export default class Level {
         this.dimensions = dimensions;
         this.level = JSON.parse(JSON.stringify(LEVELS))[currentLevel];
         this.currentLevel = currentLevel;
-        // this.bricks = [];
         this.bricks = {};
         this.targetLength = 10;
         this.targets = {};
         this.numTargets = 0;
         this.color = '0,92,175';
         this.bombs = {}
-        // debugger
     };
  
     drawLevel(ctx, player) {
         const wallWidth = this.dimensions.width / this.level[0].length
         const wallHeight = this.dimensions.height / this.level.length
-        // debugger
-        // let numBricks = myCount(this.level.flat(), 1)
         this.numTargets = myCount(this.level.flat(), 2)
         for(let row = 0; row < this.level.length; row ++){
             for(let col= 0; col < this.level[0].length; col++){
@@ -49,8 +45,6 @@ export default class Level {
                         ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
                     }
                     ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
-                    // ctx.fillStyle = `red`
-                    // ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
                     this.bombs[[row, col]] = {
                         left : leftStart, top:upStart, 
                         right : (leftStart + wallWidth), 
@@ -58,7 +52,6 @@ export default class Level {
                     }
                 }
                 else if(this.level[row][col] === 2){
-                    // debugger
                     if(col === 0) {
                         leftStart += CONSTANTS.BOARDER_WIDTH
                     }
@@ -66,7 +59,6 @@ export default class Level {
                         upStart -= CONSTANTS.BOARDER_WIDTH
                     }
                     let targetColor
-                    // debugger
                     let pos = row + ',' + col
                     if (Object.keys(this.targets).includes(pos)){
                         targetColor = this.targets[[row,col]]
@@ -86,16 +78,11 @@ export default class Level {
                 }
             }
         }
-        // debugger
     }
 
     drawBackground(ctx){
-        // debugger
         ctx.fillStyle = "rgba(255,255,255,0.4)"
-        ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
-        // ctx.fillStyle = `rgba(${this.color}, 0.2)`;
-        // ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
-        
+        ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);     
     }
 
     randomColor(){

@@ -129,20 +129,14 @@ class Game {
       }
 
     restart(currentLevel) {
-        // debugger
-        // console.log(this.currentLevel)
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
         }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
-        // renderScores()
-        // renderScores()
-        // fetchScores()
         this.numTargets = 1
         if(this.gameover()){
-            // debugger
             this.currentLevel = 0
             this.gameoverTracker = true
             this.gameoverFrame()
@@ -150,7 +144,6 @@ class Game {
             this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions, currentLevel);
             this.player = new _player__WEBPACK_IMPORTED_MODULE_0__["default"](this.dimensions, this.keysTracker, this.level);
             this.totalTarget = _util__WEBPACK_IMPORTED_MODULE_2__["LEVELS"][this.currentLevel].flat().filter(el => el ===2).length  
-            // debugger
             this.animate();
         }
     }
@@ -408,21 +401,17 @@ class Level {
         this.dimensions = dimensions;
         this.level = JSON.parse(JSON.stringify(_util__WEBPACK_IMPORTED_MODULE_0__["LEVELS"]))[currentLevel];
         this.currentLevel = currentLevel;
-        // this.bricks = [];
         this.bricks = {};
         this.targetLength = 10;
         this.targets = {};
         this.numTargets = 0;
         this.color = '0,92,175';
         this.bombs = {}
-        // debugger
     };
  
     drawLevel(ctx, player) {
         const wallWidth = this.dimensions.width / this.level[0].length
         const wallHeight = this.dimensions.height / this.level.length
-        // debugger
-        // let numBricks = myCount(this.level.flat(), 1)
         this.numTargets = Object(_util__WEBPACK_IMPORTED_MODULE_0__["myCount"])(this.level.flat(), 2)
         for(let row = 0; row < this.level.length; row ++){
             for(let col= 0; col < this.level[0].length; col++){
@@ -450,8 +439,6 @@ class Level {
                         ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
                     }
                     ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
-                    // ctx.fillStyle = `red`
-                    // ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
                     this.bombs[[row, col]] = {
                         left : leftStart, top:upStart, 
                         right : (leftStart + wallWidth), 
@@ -459,7 +446,6 @@ class Level {
                     }
                 }
                 else if(this.level[row][col] === 2){
-                    // debugger
                     if(col === 0) {
                         leftStart += _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH
                     }
@@ -467,7 +453,6 @@ class Level {
                         upStart -= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH
                     }
                     let targetColor
-                    // debugger
                     let pos = row + ',' + col
                     if (Object.keys(this.targets).includes(pos)){
                         targetColor = this.targets[[row,col]]
@@ -487,16 +472,11 @@ class Level {
                 }
             }
         }
-        // debugger
     }
 
     drawBackground(ctx){
-        // debugger
         ctx.fillStyle = "rgba(255,255,255,0.4)"
-        ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
-        // ctx.fillStyle = `rgba(${this.color}, 0.2)`;
-        // ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
-        
+        ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);     
     }
 
     randomColor(){
@@ -532,7 +512,7 @@ class Player {
     constructor(dimensions, keysTracker = {}, level) {
         this.dimensions = dimensions;
         this.x = _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH;
-        this.y = this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].EDGE //- CONSTANTS.BOARDER_WIDTH;
+        this.y = this.dimensions.height - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].EDGE 
         this.velX = 0;
         this.velY = 0; 
         this.keysTracker = keysTracker;
@@ -548,24 +528,6 @@ class Player {
         ctx.fillRect(this.x, this.y, _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_WIDTH, _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_HEIGHT);
     }
 
-    // pushPlayer(keysTracker){
-    //     // debugger
-    //     if (keysTracker[KEYS.UP]){
-    //         // this.onGround = false;
-    //         this.velY -= 1 * CONSTANTS.UP_SPEED 
-    //         if (this.velY < -CONSTANTS.MAX_SPEED) {
-    //             this.velY = -CONSTANTS.MAX_SPEED
-    //         }
-    //     }
-    //     if (keysTracker[KEYS.LEFT]) {  
-    //         // debugger          
-    //         this.velX -= CONSTANTS.HORIZENTAL_SPEED 
-    //     }
-    //     if (keysTracker[KEYS.RIGHT]){         
-    //         this.velX +=  CONSTANTS.HORIZENTAL_SPEED
-    //     }
-    // }
-
     updatePlayer(keysTracker) {
         if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].UP]){
             // this.onGround = false;
@@ -579,9 +541,6 @@ class Player {
         if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].RIGHT]){         
             this.velX +=  _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].HORIZENTAL_SPEED
         }
-        // console.log(this.x, this.y)
-        // this.onGround = false;           
-    // debugger
         this.velX *= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].FRICTION  
         if(this.y < 390){
             this.velY += _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].GRAVITY 
@@ -590,8 +549,7 @@ class Player {
             this.velY -= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].AIR_FRICTION 
         } else {
             this.velY += _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].AIR_FRICTION
-        }
-        // debugger    
+        }   
         if(Math.abs(this.velX) > _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED){
                 if(this.velX > 0) {
                     this.velX = _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].MAX_SPEED
@@ -902,10 +860,10 @@ const LEVELS = {
         [0,1,0,1,0,3,0,0,2,0],
         [0,1,0,1,0,1,3,0,1,0],
         [0,1,2,1,0,1,0,0,1,2],
-        [0,1,0,0,0,0,0,2,3,0],
+        [0,1,0,0,0,0,0,2,0,0],
         [0,1,0,0,0,0,2,1,0,0],
-        [0,1,0,3,2,0,0,1,0,0],
-        [0,0,0,1,0,3,0,1,0,0],
+        [0,1,0,3,0,0,0,1,0,0],
+        [0,0,0,1,2,3,0,1,0,0],
         [0,0,0,1,0,1,0,1,2,0],
         [0,0,2,3,0,1,0,1,0,0],
         [0,1,0,1,0,1,0,1,3,0],

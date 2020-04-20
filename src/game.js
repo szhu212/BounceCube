@@ -28,20 +28,14 @@ export default class Game {
       }
 
     restart(currentLevel) {
-        // debugger
-        // console.log(this.currentLevel)
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
         }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
-        // renderScores()
-        // renderScores()
-        // fetchScores()
         this.numTargets = 1
         if(this.gameover()){
-            // debugger
             this.currentLevel = 0
             this.gameoverTracker = true
             this.gameoverFrame()
@@ -49,7 +43,6 @@ export default class Game {
             this.level = new Level(this.dimensions, currentLevel);
             this.player = new Player(this.dimensions, this.keysTracker, this.level);
             this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length  
-            // debugger
             this.animate();
         }
     }
