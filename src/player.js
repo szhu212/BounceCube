@@ -12,6 +12,7 @@ export default class Player {
         this.level = level;
         // this.onGround = false;
         this.collisionAdj = 0;
+        this.levelOver = false
     }
 
 
@@ -132,6 +133,16 @@ export default class Player {
             }
             })
         return collision;
+    }
+
+    collideWithBomb(){
+        Object.values(this.level.bombs).forEach(
+            bomb => {
+            if (_overlap(bomb, this.bounds())){
+                this.levelOver = true
+            }
+            })
+        return this.levelOver;
     }
 
     // collisionDir(){

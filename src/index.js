@@ -7,19 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const musicButton = document.getElementById('music-button')
 const musicIcon = document.getElementById('music-icon')
-const music = new Audio('./bensound-summer.mp3') 
-music.loop = true
+const music = document.getElementById('music')
 let playingMusic = false
 musicButton.addEventListener('click', handleMusic)
+
 
 function handleMusic() {
     if (playingMusic){
         playingMusic = false;
-        musicIcon.src = "./play-music.png"
+        musicIcon.src = './play-music.png'
         music.pause()
     } else {
         playingMusic = true
-        musicIcon.src = "./stop-music2.png"
+        musicIcon.src = './stop-music2.png'
         music.play()
     }
 }
+

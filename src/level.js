@@ -13,6 +13,7 @@ export default class Level {
         this.targets = {};
         this.numTargets = 0;
         this.color = '0,92,175';
+        this.bombs = {}
         // debugger
     };
  
@@ -20,7 +21,7 @@ export default class Level {
         const wallWidth = this.dimensions.width / this.level[0].length
         const wallHeight = this.dimensions.height / this.level.length
         // debugger
-        let numBricks = myCount(this.level.flat(), 1)
+        // let numBricks = myCount(this.level.flat(), 1)
         this.numTargets = myCount(this.level.flat(), 2)
         for(let row = 0; row < this.level.length; row ++){
             for(let col= 0; col < this.level[0].length; col++){
@@ -35,7 +36,26 @@ export default class Level {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
                     }
                     ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
-                   this.bricks[[row, col]] = {left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)}
+                   this.bricks[[row, col]] = {
+                        left : leftStart, top:upStart, 
+                        right : (leftStart + wallWidth), 
+                        bottom : (upStart + wallHeight)
+                    }
+                }
+                else if (this.level[row][col] === 3) {
+                    const bombImg = new Image();
+                    bombImg.src = './bomb.png';
+                    bombImg.onload = function () {
+                        ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
+                    }
+                    ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
+                    // ctx.fillStyle = `red`
+                    // ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
+                    this.bombs[[row, col]] = {
+                        left : leftStart, top:upStart, 
+                        right : (leftStart + wallWidth), 
+                        bottom : (upStart + wallHeight)
+                    }
                 }
                 else if(this.level[row][col] === 2){
                     // debugger

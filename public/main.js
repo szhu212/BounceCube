@@ -192,26 +192,36 @@ class Game {
         if (this.textTimer === 0 && this.currentLevel === 0){this.timer = 0}
         this.ctx.font = '20px Dosis'
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20)
+        this.ctx.strokeStyle = 'skyblue';
+
+        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20);
+        this.ctx.strokeText(`${this.timer}`, this.canvas.width -60, 20);
+
     }
 
     drawCounter(){
         let counterText = `${this.numTargets}/${this.totalTarget}`
-        this.ctx.font = '20px Dosis'
+        this.ctx.font = '20px Dosis';
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillText(counterText, this.canvas.width -60, 50)
+        this.ctx.strokeStyle = 'skyblue';
+        this.ctx.fillText(counterText, this.canvas.width -60, 50);
+        this.ctx.strokeText(counterText, this.canvas.width -60, 50);
      }
 
     animate() {
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.level.animate(this.ctx, this.player)
-    
         this.player.animate(this.ctx, this.keysTracker)
         this.numTargets = this.level.numTargets
         this.drawTimer()
         this.drawText()
         this.drawCounter()
+        if(this.player.collideWithBomb()){
+            this.restart(this.currentLevel);
+            this.hitBomb = true;
+            this.drawText()
+        }
         if (this.numTargets === 0 && !this.gameoverTracker) {
             this.currentLevel += 1;
             this.levelUp = true;
@@ -250,11 +260,51 @@ class Game {
             // this.ctx.strokeText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
             this.ctx.restore();
         }
-        if ((this.textTimer < 100 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
-            this.levelUpText()
+        if ((this.textTimer < 150 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
+            if (this.hitBomb){
+                this.ctx.save()
+                this.ctx.font = '25px Dosis'
+                this.ctx.fillStyle = 'red';
+                this.ctx.strokeStyle = 'white'
+                this.ctx.fillText(
+                    "You hit the bomb, level restarted", 
+                    this.canvas.width / 12,this.canvas.height / 5, 
+                    this.canvas.width * 5 / 6
+                    )
+                this.ctx.strokeText (
+                    "You hit the bomb, level restarted", 
+                    this.canvas.width / 12,this.canvas.height / 5, 
+                    this.canvas.width * 5 / 6
+                )
+                this.ctx.restore();
+                this.textTimer += 1
+            } else {
+                this.levelUpText()
+            } 
         } else {
             this.textTimer += 1
         }
+        // if (this.textTimer < 200 && this.hitBomb){
+        //     this.ctx.save()
+        //     this.ctx.font = '25px Dosis'
+        //     this.ctx.fillStyle = 'red';
+        //     this.ctx.strokeStyle = 'white'
+        //     this.ctx.fillText(
+        //         "You hit the bomb, go back to the start of the current level", 
+        //         this.canvas.width / 12,this.canvas.height / 5, 
+        //         this.canvas.width * 5 / 6
+        //         )
+        //     this.ctx.strokeText (
+        //         "You hit the bomb, go back to the start of the current level", 
+        //         this.canvas.width / 12,this.canvas.height / 5, 
+        //         this.canvas.width * 5 / 6
+        //     )
+        //     this.ctx.restore();
+        //     this.textTimer += 1
+        // }
+        if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false}
+        console.log(this.hitBomb)
+        console.log(this.textTimer)
     }
 
     gameover(){
@@ -310,9 +360,7 @@ class Game {
     }
 
 
-    // fetchScores() {
-    //     firebase.database().ref('scores').orderByChild('score').limitToFirst(4)
-    // }
+
 
 }
 
@@ -337,21 +385,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const musicButton = document.getElementById('music-button')
 const musicIcon = document.getElementById('music-icon')
-const music = new Audio('./bensound-summer.mp3') 
+const music = document.getElementById('music')
 let playingMusic = false
 musicButton.addEventListener('click', handleMusic)
+
 
 function handleMusic() {
     if (playingMusic){
         playingMusic = false;
-        musicIcon.src = "./play-music.png"
+        musicIcon.src = './play-music.png'
         music.pause()
     } else {
         playingMusic = true
-        musicIcon.src = "./stop-music2.png"
+        musicIcon.src = './stop-music2.png'
         music.play()
     }
 }
+
+
 
 /***/ }),
 
@@ -381,6 +432,7 @@ class Level {
         this.targets = {};
         this.numTargets = 0;
         this.color = '0,92,175';
+        this.bombs = {}
         // debugger
     };
  
@@ -388,7 +440,7 @@ class Level {
         const wallWidth = this.dimensions.width / this.level[0].length
         const wallHeight = this.dimensions.height / this.level.length
         // debugger
-        let numBricks = Object(_util__WEBPACK_IMPORTED_MODULE_0__["myCount"])(this.level.flat(), 1)
+        // let numBricks = myCount(this.level.flat(), 1)
         this.numTargets = Object(_util__WEBPACK_IMPORTED_MODULE_0__["myCount"])(this.level.flat(), 2)
         for(let row = 0; row < this.level.length; row ++){
             for(let col= 0; col < this.level[0].length; col++){
@@ -403,7 +455,26 @@ class Level {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
                     }
                     ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
-                   this.bricks[[row, col]] = {left : leftStart, top:upStart, right : (leftStart + wallWidth), bottom : (upStart + wallHeight)}
+                   this.bricks[[row, col]] = {
+                        left : leftStart, top:upStart, 
+                        right : (leftStart + wallWidth), 
+                        bottom : (upStart + wallHeight)
+                    }
+                }
+                else if (this.level[row][col] === 3) {
+                    const bombImg = new Image();
+                    bombImg.src = './bomb.png';
+                    bombImg.onload = function () {
+                        ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
+                    }
+                    ctx.drawImage(bombImg, leftStart, upStart, wallWidth, wallHeight);
+                    // ctx.fillStyle = `red`
+                    // ctx.fillRect(leftStart, upStart, wallWidth, wallHeight)
+                    this.bombs[[row, col]] = {
+                        left : leftStart, top:upStart, 
+                        right : (leftStart + wallWidth), 
+                        bottom : (upStart + wallHeight)
+                    }
                 }
                 else if(this.level[row][col] === 2){
                     // debugger
@@ -486,6 +557,7 @@ class Player {
         this.level = level;
         // this.onGround = false;
         this.collisionAdj = 0;
+        this.levelOver = false
     }
 
 
@@ -606,6 +678,16 @@ class Player {
             }
             })
         return collision;
+    }
+
+    collideWithBomb(){
+        Object.values(this.level.bombs).forEach(
+            bomb => {
+            if (Object(_util__WEBPACK_IMPORTED_MODULE_0__["_overlap"])(bomb, this.bounds())){
+                this.levelOver = true
+            }
+            })
+        return this.levelOver;
     }
 
     // collisionDir(){
@@ -733,7 +815,7 @@ class Player {
 /*!*********************!*\
   !*** ./src/util.js ***!
   \*********************/
-/*! exports provided: CONSTANTS, KEYS, LEVELS, levelInstruction, colors, _overlap, myCount, scores, renderScores, submitScore, playAudio */
+/*! exports provided: CONSTANTS, KEYS, LEVELS, levelInstruction, colors, _overlap, myCount, scores, renderScores, submitScore */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -748,7 +830,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "scores", function() { return scores; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderScores", function() { return renderScores; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "submitScore", function() { return submitScore; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "playAudio", function() { return playAudio; });
 
 const CONSTANTS = {
     GRAVITY: 0.8,
@@ -804,7 +885,7 @@ const LEVELS = {
         [1,0,0,0,0,2,0,0,0,0],
         [1,0,0,2,0,0,0,0,0,0],
         [1,0,0,0,0,0,0,0,0,0],
-        [1,1,1,1,1,1,1,1,0,0],
+        [1,1,1,3,1,1,1,1,0,0],
         [0,0,2,0,0,0,1,0,0,1],
         [0,2,0,0,0,0,0,0,0,1],
         [0,0,1,1,1,1,1,1,1,1]
@@ -824,16 +905,29 @@ const LEVELS = {
     ],
     3: [
         [0,0,0,0,0,0,0,0,2,0],
-        [0,1,1,1,0,1,1,1,1,0],
+        [0,1,1,1,0,1,3,1,1,0],
         [0,1,2,1,0,1,0,2,1,0],
-        [0,1,0,0,0,0,0,1,2,0],
+        [0,1,0,0,0,0,0,0,1,0],
         [0,1,0,0,0,0,0,1,0,0],
-        [0,1,1,1,0,0,1,0,0,0],
+        [0,1,1,3,0,0,0,1,0,0],
         [0,0,0,1,0,0,1,2,0,0],
         [0,0,0,1,0,0,1,0,0,0],
         [0,0,2,1,0,1,0,0,2,0],
         [0,1,0,1,0,1,0,0,1,0],
         [0,1,1,1,0,1,1,1,1,0]
+    ],
+    4: [
+        [0,1,0,1,0,3,0,0,2,0],
+        [0,1,0,1,0,1,3,0,1,0],
+        [0,1,2,1,0,1,0,0,1,2],
+        [0,1,0,0,0,0,0,2,3,0],
+        [0,1,0,0,0,0,2,1,0,0],
+        [0,1,0,3,2,0,0,1,0,0],
+        [0,0,0,1,0,3,0,1,0,0],
+        [0,0,0,1,0,1,0,1,2,0],
+        [0,0,2,3,0,1,0,1,0,0],
+        [0,1,0,1,0,1,0,1,3,0],
+        [0,1,0,1,0,1,0,1,3,0]
     ]
 }
 
@@ -841,8 +935,9 @@ const LEVELS = {
 const levelInstruction = {
     0: "Have Fun!",
     1: "Level up. Great Job!",
-    2: "Level up. You Rock!",
-    3: "Level Up. Getting Harder!"
+    2: "Level up. Be ware of the bomb!",
+    3: "Level Up. Getting Harder!",
+    4: "Level Up. Good luck, chanllenger!"
 }
 
 const colors = {
@@ -878,6 +973,40 @@ const myCount = (arr, target) => {
     return arr.filter(el => el === target).length
 }
 
+// export const fetchScores = () => {
+//     // const scores = []
+//    let scores
+//    let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+//    fetchedData.on('value', dataSnapshot => {
+//         scores = dataSnapshot.val()
+//    })
+//    let keys = Object.keys(scores)
+// //    debugger
+// //    let vals = []
+// //    scores.forEach(el => {
+// //        vals.push(Object.values(el))
+// //    })
+//    return scores
+// }
+
+// let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+
+
+
+// fetchedData.on('child_added', dataSnapshot => {
+//     console.log(dataSnapshot.val())
+//     scores.push(dataSnapshot.val())
+//         // scores = dataSnapshot.val()
+// //         console.log(dataSnapshot.val())
+// })
+
+// export async function fetchScores (){
+//     let fetchedData = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+//     let valsObj = fetchedData.once('value')
+//     let vals = Object.values(valsObj.val())
+//     return vals
+// }
+
 let fetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
 const scores = []
  
@@ -893,6 +1022,7 @@ fetchScores.on('child_added', snapshot => {
         highScoreP.innerHTML = `${name} ${score}s`
         highScoreDiv.appendChild(highScoreP)
     })
+    // console.log('hiii')
 })
 
 async function renderScores () {
@@ -911,7 +1041,18 @@ async function renderScores () {
             highScoreP.innerHTML = `${name} ${score}s`
             highScoreDiv.appendChild(highScoreP)
         })
+        // console.log('hiii')
     })
+    // let highScoreDiv = document.getElementById('high-scores')
+    // highScoreDiv.innerHTML = ""
+    // vals.sort(compare)
+    // vals.forEach(el=> {
+    //     let name = el.name
+    //     let score = el.score
+    //     let highScoreP = document.createElement('p')
+    //     highScoreP.innerHTML = `${name} ${score}s`
+    //     highScoreDiv.appendChild(highScoreP)
+    // })
 }
 
 const compare = (a, b) => {
@@ -934,11 +1075,6 @@ const submitScore = (name, score) => {
     renderScores()
 }
 
-const music = new Audio('/assets/bensound-summer.mp3') 
-
-const playAudio = () => {
-    music.play();
-  }
 
 /***/ })
 

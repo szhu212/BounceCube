@@ -91,26 +91,36 @@ export default class Game {
         if (this.textTimer === 0 && this.currentLevel === 0){this.timer = 0}
         this.ctx.font = '20px Dosis'
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20)
+        this.ctx.strokeStyle = 'skyblue';
+
+        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20);
+        this.ctx.strokeText(`${this.timer}`, this.canvas.width -60, 20);
+
     }
 
     drawCounter(){
         let counterText = `${this.numTargets}/${this.totalTarget}`
-        this.ctx.font = '20px Dosis'
+        this.ctx.font = '20px Dosis';
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillText(counterText, this.canvas.width -60, 50)
+        this.ctx.strokeStyle = 'skyblue';
+        this.ctx.fillText(counterText, this.canvas.width -60, 50);
+        this.ctx.strokeText(counterText, this.canvas.width -60, 50);
      }
 
     animate() {
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.level.animate(this.ctx, this.player)
-    
         this.player.animate(this.ctx, this.keysTracker)
         this.numTargets = this.level.numTargets
         this.drawTimer()
         this.drawText()
         this.drawCounter()
+        if(this.player.collideWithBomb()){
+            this.restart(this.currentLevel);
+            this.hitBomb = true;
+            this.drawText()
+        }
         if (this.numTargets === 0 && !this.gameoverTracker) {
             this.currentLevel += 1;
             this.levelUp = true;
@@ -149,11 +159,51 @@ export default class Game {
             // this.ctx.strokeText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
             this.ctx.restore();
         }
-        if ((this.textTimer < 100 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
-            this.levelUpText()
+        if ((this.textTimer < 150 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
+            if (this.hitBomb){
+                this.ctx.save()
+                this.ctx.font = '25px Dosis'
+                this.ctx.fillStyle = 'red';
+                this.ctx.strokeStyle = 'white'
+                this.ctx.fillText(
+                    "You hit the bomb, level restarted", 
+                    this.canvas.width / 12,this.canvas.height / 5, 
+                    this.canvas.width * 5 / 6
+                    )
+                this.ctx.strokeText (
+                    "You hit the bomb, level restarted", 
+                    this.canvas.width / 12,this.canvas.height / 5, 
+                    this.canvas.width * 5 / 6
+                )
+                this.ctx.restore();
+                this.textTimer += 1
+            } else {
+                this.levelUpText()
+            } 
         } else {
             this.textTimer += 1
         }
+        // if (this.textTimer < 200 && this.hitBomb){
+        //     this.ctx.save()
+        //     this.ctx.font = '25px Dosis'
+        //     this.ctx.fillStyle = 'red';
+        //     this.ctx.strokeStyle = 'white'
+        //     this.ctx.fillText(
+        //         "You hit the bomb, go back to the start of the current level", 
+        //         this.canvas.width / 12,this.canvas.height / 5, 
+        //         this.canvas.width * 5 / 6
+        //         )
+        //     this.ctx.strokeText (
+        //         "You hit the bomb, go back to the start of the current level", 
+        //         this.canvas.width / 12,this.canvas.height / 5, 
+        //         this.canvas.width * 5 / 6
+        //     )
+        //     this.ctx.restore();
+        //     this.textTimer += 1
+        // }
+        if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false}
+        console.log(this.hitBomb)
+        console.log(this.textTimer)
     }
 
     gameover(){
