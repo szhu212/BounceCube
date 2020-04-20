@@ -1,6 +1,6 @@
 import Player from "./player"
 import Level from "./level"
-import {levelMessages, levelInstruction, LEVELS, renderScores, scores, submitScore, playAudio} from "./util"
+import { levelInstruction, LEVELS, renderScores, scores, submitScore} from "./util"
 
 export default class Game {
 
@@ -128,8 +128,8 @@ export default class Game {
         this.ctx.font = '38px Dosis'
         this.ctx.fillStyle = 'white';
         this.ctx.strokeStyle = 'yellow'
-        this.ctx.fillText(`${levelMessages[this.currentLevel]}`, this.canvas.width / 3, 100)
-        this.ctx.strokeText(`${levelMessages[this.currentLevel]}`, this.canvas.width / 3, 100)
+        this.ctx.fillText(`Level${this.currentLevel+1}`, this.canvas.width / 3, 100)
+        this.ctx.strokeText(`Level${this.currentLevel+1}`, this.canvas.width / 3, 100)
         this.ctx.font = '28px Dosis';
         this.ctx.strokeStyle = 'skyblue'
         this.ctx.fillText(`${levelInstruction[this.currentLevel]}`, 200, 140);
@@ -169,11 +169,10 @@ export default class Game {
         const gameoverBox = document.getElementById('gameover-box')
         gameoverBox.style.transition = 'all 1s ease-in-out;'
         gameoverBox.style.opacity = 1;
-        // gameoverBox.style.display = block;
         let gameoverMessageP = document.createElement('p')
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
-        gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all the levels. Congratulations!`
+        gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all levels. Congratulations!`
         const  gameoverMessage = document.getElementById("gameover-messsage")
         gameoverMessage.innerHTML = '';
         gameoverMessage.appendChild(gameoverMessageP)
@@ -185,12 +184,12 @@ export default class Game {
 
         let lowestRecord = Math.max(...highScores)
         let name = ''
-        if(gameScore < lowestRecord) {
+        if(gameScore < lowestRecord || scores.length < 5 ) {
             this.highestScoreMode = true
             let recordSubmissionDiv = document.getElementById("record-submission") 
             recordSubmissionDiv.innerHTML = ''
             let highScoreMessageP = document.createElement('p')
-            highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our high score board ☺' 
+            highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our Best Records board ☺' 
             recordSubmissionDiv.appendChild(highScoreMessageP)
             let nameInput = document.createElement('input')
             nameInput.type = 'text'

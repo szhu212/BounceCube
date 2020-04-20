@@ -28,10 +28,8 @@ export default class Level {
                 let upStart = row * wallHeight
                 
                 if(this.level[row][col] === 1){
-                    // debugger
-                    // const image = document.getElementById('ice-image');
                     const image = new Image();
-                    image.src = './assets/brick.png';
+                    image.src = './brick.png';
                     // debugger
                     image.onload = function () {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);

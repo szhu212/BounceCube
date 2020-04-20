@@ -2,6 +2,10 @@ body {
     margin: 0px;
 }
 
+button:hover {
+    cursor: pointer;
+}
+
 .a, a:link, a:visited {
   color: inherit;
   text-align: inherit;
@@ -226,15 +230,16 @@ body {
     font-family: 'Dosis', sans-serif;
 }
 
-#record-submission button:hover {
+#music-button:hover {
     transform: scale(1.1);
+    cursor: pointer;
 }
 
 #music-button {
     padding: 5px;
     margin-top: 10px;
     border: 2px solid white;
-    border-radius: 5px;
+    border-radius: 3px;
     width: 36px;
     height: 36px;
     display: flex;
