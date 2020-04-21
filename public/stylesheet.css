@@ -79,9 +79,8 @@ button:hover {
     justify-content: space-between;
 }
 
-#gameover-box h2 {
+#you-won-message {
     font-size: 30px;
-    animation-iteration-count: 5;
 }
 
 @keyframes shake {

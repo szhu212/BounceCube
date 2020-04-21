@@ -17,7 +17,6 @@ function handleMusic() {
         playingMusic = false;
         musicIcon.src = './play-music.png'
         musicButton.className = ''
-        musicButton.classList.add('music-paused')
         music.pause()
     } else {
         playingMusic = true

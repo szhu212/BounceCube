@@ -199,7 +199,9 @@ export default class Game {
         const  gameoverMessage = document.getElementById("gameover-messsage")
         gameoverMessage.innerHTML = '';
         gameoverMessage.appendChild(gameoverMessageP)
-        document.getElementById("you-won-message").style.animation = "shake 0.5s";
+        const youWonH2 = document.getElementById("you-won-message")
+        youWonH2.style.animation = "shake 0.5s";
+        youWonH2.style.animationIterationCount = 2.5;
         let highScores = []
         scores.forEach(el => {
             highScores.push(el.score) 
@@ -228,7 +230,7 @@ export default class Game {
                 this.highestScoreMode = false
                 submitScore(name, gameScore)
             })
-        }  
+        } 
     }
 
 
