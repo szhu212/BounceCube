@@ -1,5 +1,5 @@
-import { myCount, _overlap, CONSTANTS } from "./util"
-import { LEVELS, colors } from "./util"
+import { myCount, _overlap, CONSTANTS, playBeep, LEVELS, colors} from "./util"
+import playingMusic from "./index"
 
 export default class Level {
 
@@ -70,6 +70,8 @@ export default class Level {
                     let currentTarget = {left : leftStart, top:upStart, right : (leftStart + this.targetLength), bottom : (upStart + this.targetLength), color: targetColor}
                     this.targets[[row, col]] = targetColor
                     if(_overlap(player.bounds(), currentTarget)){
+                        playBeep()
+                        console.log(playingMusic)
                         this.level[row][col] = 0
                         this.color = currentTarget.color
                         const gamePage = document.getElementById('game-page')

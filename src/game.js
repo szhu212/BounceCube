@@ -1,6 +1,6 @@
 import Player from "./player"
 import Level from "./level"
-import { levelInstruction, LEVELS, renderScores, scores, submitScore} from "./util"
+import { levelInstruction, LEVELS, scores, submitScore} from "./util"
 
 export default class Game {
 
@@ -177,8 +177,6 @@ export default class Game {
             this.textTimer += 1
         }
         if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false}
-        console.log(this.hitBomb)
-        console.log(this.textTimer)
     }
 
     gameover(){

@@ -1,4 +1,4 @@
-import { _overlap, CONSTANTS, KEYS } from "./util"
+import { _overlap, CONSTANTS, KEYS, playBeep } from "./util"
 
 export default class Player {
 

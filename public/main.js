@@ -278,8 +278,6 @@ class Game {
             this.textTimer += 1
         }
         if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false}
-        console.log(this.hitBomb)
-        console.log(this.textTimer)
     }
 
     gameover(){
@@ -345,7 +343,7 @@ class Game {
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! no exports provided */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -369,13 +367,20 @@ function handleMusic() {
     if (playingMusic){
         playingMusic = false;
         musicIcon.src = './play-music.png'
+        musicButton.className = ''
+        musicButton.classList.add('music-paused')
         music.pause()
     } else {
         playingMusic = true
         musicIcon.src = './stop-music2.png'
+        musicButton.className = ''
+        musicButton.classList.add('music-playing')
+        music.volume = 0.2
         music.play()
     }
 }
+
+/* harmony default export */ __webpack_exports__["default"] = (playingMusic);
 
 
 
@@ -392,6 +397,7 @@ function handleMusic() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Level; });
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util.js");
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index */ "./src/index.js");
 
 
 
@@ -464,6 +470,8 @@ class Level {
                     let currentTarget = {left : leftStart, top:upStart, right : (leftStart + this.targetLength), bottom : (upStart + this.targetLength), color: targetColor}
                     this.targets[[row, col]] = targetColor
                     if(Object(_util__WEBPACK_IMPORTED_MODULE_0__["_overlap"])(player.bounds(), currentTarget)){
+                        Object(_util__WEBPACK_IMPORTED_MODULE_0__["playBeep"])()
+                        console.log(_index__WEBPACK_IMPORTED_MODULE_1__["default"])
                         this.level[row][col] = 0
                         this.color = currentTarget.color
                         const gamePage = document.getElementById('game-page')
@@ -755,7 +763,7 @@ class Player {
 /*!*********************!*\
   !*** ./src/util.js ***!
   \*********************/
-/*! exports provided: CONSTANTS, KEYS, LEVELS, levelInstruction, colors, _overlap, myCount, scores, renderScores, submitScore */
+/*! exports provided: CONSTANTS, KEYS, LEVELS, levelInstruction, colors, _overlap, myCount, scores, renderScores, submitScore, playBeep */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -770,7 +778,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "scores", function() { return scores; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderScores", function() { return renderScores; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "submitScore", function() { return submitScore; });
-
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "playBeep", function() { return playBeep; });
 const CONSTANTS = {
     GRAVITY: 0.8,
     FRICTION: 0.8,
@@ -1013,6 +1021,14 @@ const submitScore = (name, score) => {
     let recordSubmissionDiv = document.getElementById("record-submission") 
     recordSubmissionDiv.innerHTML = ''
     renderScores()
+}
+
+const scoreSound = new Audio('./score-sound.mp3')
+
+const playBeep = () => {
+    const playing = document.getElementById('music-button')
+    if (Object.values(playing.classList)[0] === 'music-playing')
+    scoreSound.play()
 }
 
 

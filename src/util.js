@@ -1,4 +1,3 @@
-
 export const CONSTANTS = {
     GRAVITY: 0.8,
     FRICTION: 0.8,
@@ -241,4 +240,12 @@ export const submitScore = (name, score) => {
     let recordSubmissionDiv = document.getElementById("record-submission") 
     recordSubmissionDiv.innerHTML = ''
     renderScores()
+}
+
+const scoreSound = new Audio('./score-sound.mp3')
+
+export const playBeep = () => {
+    const playing = document.getElementById('music-button')
+    if (Object.values(playing.classList)[0] === 'music-playing')
+    scoreSound.play()
 }
