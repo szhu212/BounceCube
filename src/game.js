@@ -144,12 +144,12 @@ export default class Game {
         if (this.textTimer ===0) {
             this.ctx.save()
             this.ctx.font = '25px Dosis'
-            // this.ctx.strokeStyle = 'blue'
             this.ctx.fillStyle = 'rgba(255,255,255)';
             this.ctx.shadowColor = 'rgba(0,0,0,0.7)'
             this.ctx.shadowBlur = 5
             this.ctx.fillText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
-            // this.ctx.strokeText("Press the ↑ ← → buttons on your keyboard to navigate your cube", this.canvas.width / 12,this.canvas.height *2/ 5, this.canvas.width * 5 / 6)
+            this.ctx.font = '20px Dosis'
+            this.ctx.fillText("← Your Cube", 20,this.canvas.height -5)
             this.ctx.restore();
         }
         if ((this.textTimer < 150 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
