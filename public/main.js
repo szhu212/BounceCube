@@ -486,7 +486,7 @@ class Level {
     }
 
     randomColor(){
-        let num = Math.floor(Math.random() * 17)
+        let num = Math.floor(Math.random() * 15)
         return _util__WEBPACK_IMPORTED_MODULE_0__["colors"][num]
     }
 
@@ -497,7 +497,6 @@ class Level {
    
 
 }
-
 
 /***/ }),
 
@@ -580,9 +579,11 @@ class Player {
     // if(this.onGround) {
     //     this.velY = 0;
     // }
-
+// console.log(Date.now())
         // console.log(`velY ${this.velY}`)
         // console.log(`this.y ${this.y}`)
+        // console.log(`velX ${this.velX}`)
+        // console.log(`this.x ${this.x}`)
         this.x += this.velX
         this.y += this.velY
 

@@ -66,9 +66,11 @@ export default class Player {
     // if(this.onGround) {
     //     this.velY = 0;
     // }
-
+// console.log(Date.now())
         // console.log(`velY ${this.velY}`)
         // console.log(`this.y ${this.y}`)
+        // console.log(`velX ${this.velX}`)
+        // console.log(`this.x ${this.x}`)
         this.x += this.velX
         this.y += this.velY
 
