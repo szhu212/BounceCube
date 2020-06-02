@@ -19,6 +19,7 @@ export default class Game {
         this.scores = [];
         this.highestScoreMode = false; 
         this.playingMusic = false;
+        this.animate = this.animate.bind(this)
     }
 
     play() {
@@ -100,6 +101,7 @@ export default class Game {
         this.ctx.strokeText(counterText, this.canvas.width -60, 50);
      }
 
+
     animate() {
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -120,9 +122,15 @@ export default class Game {
             this.restart(this.currentLevel)
         }
         if (this.running) {
-            requestAnimationFrame(this.animate.bind(this))
+            setTimeout(function() {
+                 requestAnimationFrame(this.animate.bind(this))
+            }.bind(this), 1000/60);
+            // requestAnimationFrame(this.animate.bind(this))
+            // requestAnimationFrame
         }
     }
+
+
 
 
     levelUpText(){

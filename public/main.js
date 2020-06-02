@@ -120,6 +120,7 @@ class Game {
         this.scores = [];
         this.highestScoreMode = false; 
         this.playingMusic = false;
+        this.animate = this.animate.bind(this)
     }
 
     play() {
@@ -201,6 +202,7 @@ class Game {
         this.ctx.strokeText(counterText, this.canvas.width -60, 50);
      }
 
+
     animate() {
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -221,9 +223,15 @@ class Game {
             this.restart(this.currentLevel)
         }
         if (this.running) {
-            requestAnimationFrame(this.animate.bind(this))
+            setTimeout(function() {
+                 requestAnimationFrame(this.animate.bind(this))
+            }.bind(this), 1000/60);
+            // requestAnimationFrame(this.animate.bind(this))
+            // requestAnimationFrame
         }
     }
+
+
 
 
     levelUpText(){
@@ -352,6 +360,7 @@ __webpack_require__.r(__webpack_exports__);
 
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById("game-canvas");
+    
     new _game__WEBPACK_IMPORTED_MODULE_0__["default"](canvas)
 })
 
@@ -579,7 +588,7 @@ class Player {
     // if(this.onGround) {
     //     this.velY = 0;
     // }
-// console.log(Date.now())
+// console.log(timestamp)
         // console.log(`velY ${this.velY}`)
         // console.log(`this.y ${this.y}`)
         // console.log(`velX ${this.velX}`)
