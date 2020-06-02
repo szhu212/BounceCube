@@ -358,18 +358,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game */ "./src/game.js");
  
 
-document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById("game-canvas");
-    
-    new _game__WEBPACK_IMPORTED_MODULE_0__["default"](canvas)
-})
-
 const musicButton = document.getElementById('music-button')
 const musicIcon = document.getElementById('music-icon')
 const music = document.getElementById('music')
 let playingMusic = false
 musicButton.addEventListener('click', handleMusic)
 
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById("game-canvas");
+    music.muted = true;
+    new _game__WEBPACK_IMPORTED_MODULE_0__["default"](canvas)
+})
+
+
+window.onload = function () {
+    music.muted = true;
+}
 
 function handleMusic() {
     if (playingMusic){
