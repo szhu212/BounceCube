@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-window.onload = function () {
-    music.muted = true;
-}
+// window.onload = function () {
+//     music.muted = true;
+// }
 
 function handleMusic() {
     if (playingMusic){
