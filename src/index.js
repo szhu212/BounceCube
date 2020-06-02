@@ -30,6 +30,7 @@ function handleMusic() {
         musicButton.classList.add('music-playing')
         music.volume = 0.2
         music.play()
+        music.muted = false;
     }
 }
 
