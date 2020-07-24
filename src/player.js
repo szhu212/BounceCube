@@ -62,7 +62,6 @@ export default class Player {
         if (this.collideWithBrick()){
             this.resolveCollision()
         }
-
     // if(this.onGround) {
     //     this.velY = 0;
     // }
@@ -73,8 +72,7 @@ export default class Player {
         // console.log(`this.x ${this.x}`)
         this.x += this.velX
         this.y += this.velY
-
-        if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {
+        if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {            this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
             this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
         }  else if (this.x < 0) {
             this.x = CONSTANTS.BOARDER_WIDTH

@@ -12,11 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     new Game(canvas)
 })
 
-
-// window.onload = function () {
-//     music.muted = true;
-// }
-
 function handleMusic() {
     if (playingMusic){
         playingMusic = false;
