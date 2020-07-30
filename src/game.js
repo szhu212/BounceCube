@@ -19,11 +19,12 @@ export default class Game {
         this.scores = [];
         this.highestScoreMode = false; 
         this.playingMusic = false;
-        this.animate = this.animate.bind(this)
+        this.animate = this.animate.bind(this);
+        this.numLife = 3;
     }
 
     play() {
-        this.running = true
+        this.running = true;
         if (Object.values(this.keysTracker).length > 0 && Object.values(this.keysTracker).some(val => val ===true))
         {this.animate()};
       }
@@ -114,6 +115,7 @@ export default class Game {
         if(this.player.collideWithBomb()){
             this.restart(this.currentLevel);
             this.hitBomb = true;
+            this.numLife -= 1
             this.drawText()
         }
         if (this.numTargets === 0 && !this.gameoverTracker) {
@@ -131,9 +133,6 @@ export default class Game {
             // requestAnimationFrame
         }
     }
-
-
-
 
     levelUpText(){
         this.textTimer += 1
@@ -173,11 +172,21 @@ export default class Game {
                     this.canvas.width / 12,this.canvas.height / 5, 
                     this.canvas.width * 5 / 6
                     )
-                this.ctx.strokeText (
+                this.ctx.fillText(
+                    `${this.numLife} lives left`, 
+                    this.canvas.width / 3,this.canvas.height / 3, 
+                    // this.canvas.width * 2 / 3
+                    )
+                this.ctx.strokeText(
                     "Oops! You hit the bomb, level restarted", 
                     this.canvas.width / 12,this.canvas.height / 5, 
                     this.canvas.width * 5 / 6
                 )
+                this.ctx.strokeText(
+                    `${this.numLife} lives left`, 
+                    this.canvas.width / 3,this.canvas.height / 3, 
+                    // this.canvas.width * 2 / 3
+                    )
                 this.ctx.restore();
                 this.textTimer += 1
             } else {
@@ -190,7 +199,7 @@ export default class Game {
     }
 
     gameover(){
-        return this.currentLevel >= Object.keys(LEVELS).length
+        return this.currentLevel >= Object.keys(LEVELS).length || this.numLife < 1
     }
 
     gameoverFrame(){
@@ -205,13 +214,20 @@ export default class Game {
         let gameoverMessageP = document.createElement('p')
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
-        gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all levels. Congratulations!`
+        const gameoverH2 = document.getElementById("gameover-title")
+        if (this.numLife >= 1) {
+            gameoverH2.innerHTML = 'You Won!'
+            gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all levels. Congratulations!`
+        } else {
+            gameoverH2.innerHTML = 'Gameover !'
+            gameoverMessageP.innerHTML = `You survived for ${minutes}M ${seconds}S. Wish you better luck next time!`
+        }
         const  gameoverMessage = document.getElementById("gameover-messsage")
         gameoverMessage.innerHTML = '';
         gameoverMessage.appendChild(gameoverMessageP)
-        const youWonH2 = document.getElementById("you-won-message")
-        youWonH2.style.animation = "shake 0.5s";
-        youWonH2.style.animationIterationCount = 2.5;
+        
+        gameoverH2.style.animation = "shake 0.5s";
+        gameoverH2.style.animationIterationCount = 2.5;
         let highScores = []
         scores.forEach(el => {
             highScores.push(el.score) 
@@ -219,7 +235,7 @@ export default class Game {
 
         let lowestRecord = Math.max(...highScores)
         let name = ''
-        if(gameScore < lowestRecord || scores.length < 5 ) {
+        if(gameScore < lowestRecord || scores.length < 5 && this.numLife >= 1) {
             this.highestScoreMode = true
             let recordSubmissionDiv = document.getElementById("record-submission") 
             recordSubmissionDiv.innerHTML = ''
