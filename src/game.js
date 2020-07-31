@@ -52,14 +52,19 @@ export default class Game {
     keyDownHandler(e) {
         this.keysTracker[e.keyCode] = true;
         if (this.keysTracker["82"]&& !this.highestScoreMode){
+            debugger
             if (this.gameoverTracker){
                 this.currentLevel = 0
                 this.startTime = Date.now()
                 this.running = false
+                this.numLife = 3
                 const gameoverPage = document.getElementById("gameover-box")
                 gameoverPage.style.opacity = "0";   
             }  
+            debugger
+        
                 this.restart(this.currentLevel)
+                debugger
         }
         else if(!this.running && !this.highestScoreMode){
             this.play()
@@ -87,7 +92,6 @@ export default class Game {
         this.ctx.font = '20px Dosis'
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
         this.ctx.strokeStyle = 'skyblue';
-
         this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20);
         this.ctx.strokeText(`${this.timer}`, this.canvas.width -60, 20);
 
@@ -100,6 +104,11 @@ export default class Game {
         this.ctx.strokeStyle = 'skyblue';
         this.ctx.fillText(counterText, this.canvas.width -60, 50);
         this.ctx.strokeText(counterText, this.canvas.width -60, 50);
+        let numLife = this.numLife || 3
+        this.ctx.strokeStyle = 'orange';
+        let textLife = (numLife === 1) ?  'Life' : 'Lives'
+        this.ctx.fillText(`${numLife}/3 ${textLife}`, this.canvas.width -90, this.canvas.height -10);
+        this.ctx.strokeText(`${numLife}/3 ${textLife}`, this.canvas.width -90, this.canvas.height -10);
      }
 
 
@@ -167,15 +176,15 @@ export default class Game {
                 this.ctx.font = '25px Dosis'
                 this.ctx.fillStyle = 'red';
                 this.ctx.strokeStyle = 'white'
+                let textLife = (this.numLife === 1) ?  'life' : 'lives'
                 this.ctx.fillText(
                     "Oops! You hit the bomb, level restarted", 
                     this.canvas.width / 12,this.canvas.height / 5, 
                     this.canvas.width * 5 / 6
                     )
                 this.ctx.fillText(
-                    `${this.numLife} lives left`, 
-                    this.canvas.width / 3,this.canvas.height / 3, 
-                    // this.canvas.width * 2 / 3
+                    `${this.numLife} ${textLife} left`, 
+                    this.canvas.width / 3,this.canvas.height / 2
                     )
                 this.ctx.strokeText(
                     "Oops! You hit the bomb, level restarted", 
@@ -183,9 +192,8 @@ export default class Game {
                     this.canvas.width * 5 / 6
                 )
                 this.ctx.strokeText(
-                    `${this.numLife} lives left`, 
-                    this.canvas.width / 3,this.canvas.height / 3, 
-                    // this.canvas.width * 2 / 3
+                    `${this.numLife} ${textLife} left`, 
+                    this.canvas.width / 3,this.canvas.height / 2 
                     )
                 this.ctx.restore();
                 this.textTimer += 1
@@ -199,7 +207,7 @@ export default class Game {
     }
 
     gameover(){
-        return this.currentLevel >= Object.keys(LEVELS).length || this.numLife < 1
+        return this.currentLevel >= Object.keys(LEVELS).length || this.numLife < 2
     }
 
     gameoverFrame(){
@@ -215,12 +223,12 @@ export default class Game {
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
         const gameoverH2 = document.getElementById("gameover-title")
-        if (this.numLife >= 1) {
+        if (this.numLife > 1) {
             gameoverH2.innerHTML = 'You Won!'
             gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all levels. Congratulations!`
         } else {
             gameoverH2.innerHTML = 'Gameover !'
-            gameoverMessageP.innerHTML = `You survived for ${minutes}M ${seconds}S. Wish you better luck next time!`
+            gameoverMessageP.innerHTML = `All 3 lives are used up. Wish you better luck next time!`
         }
         const  gameoverMessage = document.getElementById("gameover-messsage")
         gameoverMessage.innerHTML = '';
@@ -235,7 +243,8 @@ export default class Game {
 
         let lowestRecord = Math.max(...highScores)
         let name = ''
-        if(gameScore < lowestRecord || scores.length < 5 && this.numLife >= 1) {
+        // debugger
+        if((gameScore < lowestRecord || scores.length < 5) && this.numLife > 1) {
             this.highestScoreMode = true
             let recordSubmissionDiv = document.getElementById("record-submission") 
             recordSubmissionDiv.innerHTML = ''
