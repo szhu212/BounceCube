@@ -30,6 +30,7 @@ export default class Game {
       }
 
     restart(currentLevel) {
+        // debugger
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
@@ -60,6 +61,8 @@ export default class Game {
 
             // debugger
             this.keysTracker["82"] = false
+            // this.textTimer = 200
+            this.hitBomb = false
             // console.log("1")
             if (this.gameoverTracker){
                 this.currentLevel = 0
