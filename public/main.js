@@ -142,38 +142,49 @@ class Game {
             this.currentLevel = 0
             this.gameoverTracker = true
             this.gameoverFrame()
+            // this.animate();
+
         } else {
             this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions, currentLevel);
             this.player = new _player__WEBPACK_IMPORTED_MODULE_0__["default"](this.dimensions, this.keysTracker, this.level);
             this.totalTarget = _util__WEBPACK_IMPORTED_MODULE_2__["LEVELS"][this.currentLevel].flat().filter(el => el ===2).length  
             this.animate();
         }
+        // this.animate();
     }
 
     keyDownHandler(e) {
+        // console.log(this.running)
         this.keysTracker[e.keyCode] = true;
-        if (this.keysTracker["82"]&& !this.highestScoreMode){
-            debugger
+        // if (this.keysTracker["82"]&& !this.highestScoreMode){
+            if (this.keysTracker["82"]){
+                // gameoverPage.style.opacity = "0";  
+
+            // debugger
+            this.keysTracker["82"] = false
+            // console.log("1")
             if (this.gameoverTracker){
                 this.currentLevel = 0
                 this.startTime = Date.now()
                 this.running = false
                 this.numLife = 3
                 const gameoverPage = document.getElementById("gameover-box")
-                gameoverPage.style.opacity = "0";   
+                gameoverPage.style.opacity = "0";  
+                // console.log(this.numLife) 
             }  
-            debugger
-        
-                this.restart(this.currentLevel)
-                debugger
+            // debugger
+                this.restart(this.currentLevel)   
+                // debugger
         }
         else if(!this.running && !this.highestScoreMode){
+            // debugger
             this.play()
         }
     }
 
     keyUpHandler(e) {
         this.keysTracker[e.keyCode] = false;
+        // debugger
     }
     
     registerEvents() {
@@ -222,6 +233,7 @@ class Game {
         this.drawTimer()
         this.drawText()
         this.drawCounter()
+        // console.log(this.running)
         if(this.player.collideWithBomb()){
             this.restart(this.currentLevel);
             this.hitBomb = true;
@@ -319,7 +331,7 @@ class Game {
         gamePage.style.backgroundColor = 'orange'
         const gameoverBox = document.getElementById('gameover-box')
         gameoverBox.style.transition = 'all 1s ease-in-out;'
-        gameoverBox.style.opacity = 1;
+        gameoverBox.style.opacity = 0.5;
         let gameoverMessageP = document.createElement('p')
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
@@ -346,7 +358,11 @@ class Game {
         let name = ''
         // debugger
         if((gameScore < lowestRecord || _util__WEBPACK_IMPORTED_MODULE_2__["scores"].length < 5) && this.numLife > 1) {
-            this.highestScoreMode = true
+            debugger
+
+            // if (this.numLife > 1) {
+            // this.highestScoreMode = true
+
             let recordSubmissionDiv = document.getElementById("record-submission") 
             recordSubmissionDiv.innerHTML = ''
             let highScoreMessageP = document.createElement('p')
@@ -363,9 +379,10 @@ class Game {
             submitButton.innerHTML = 'Submit' 
             recordSubmissionDiv.appendChild(submitButton)
             submitButton.addEventListener('click', e => {
-                this.highestScoreMode = false
+                // this.highestScoreMode = false
                 Object(_util__WEBPACK_IMPORTED_MODULE_2__["submitScore"])(name, gameScore)
             })
+            // }
         } 
     }
 
@@ -836,68 +853,81 @@ const LEVELS = {
     0: [
         [1,1,1,1,1,0,0],
         [1,0,0,0,0,0,0],
-        [0,0,0,0,0,0,2],
-        [0,2,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0],
         [1,1,1,0,0,0,0],
-        [0,0,0,2,0,0,0],
         [0,0,0,0,0,0,0],
-        [2,0,0,0,0,0,0],
-        [3,0,0,0,0,2,0],
+        [0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0],
+        [3,0,2,0,0,0,0],
         [0,0,1,1,1,0,0]
     ],
-    1: [
-        [1,1,1,1,1,0,0],
-        [0,0,0,0,0,0,2],
-        [1,1,0,0,0,0,0],
-        [0,0,0,0,0,2,1],
-        [0,0,0,0,0,1,1],
-        [1,1,0,0,0,0,0],
-        [0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0],
-        [0,0,2,0,0,0,0],
-        [0,2,0,0,0,0,0],
-        [0,0,1,1,1,0,0]
-    ],
-    2: [
-        [1,1,1,1,1,1,1,1,1,1],
-        [0,0,0,0,0,0,2,0,0,1],
-        [0,0,1,0,0,0,0,0,0,1],
-        [1,0,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,2,0,0,0,0],
-        [1,0,0,2,0,0,0,0,0,0],
-        [1,0,0,0,0,0,0,0,0,0],
-        [1,1,1,3,1,1,1,1,0,0],
-        [0,0,2,0,0,0,1,0,0,1],
-        [0,2,0,0,0,0,0,0,0,1],
-        [0,0,1,1,1,1,1,1,1,1]
-    ],
-    3: [
-        [0,0,0,0,0,0,0,0,2,0],
-        [0,1,1,1,0,1,3,1,1,0],
-        [0,1,2,1,0,1,0,2,1,0],
-        [0,1,0,0,0,0,0,0,1,0],
-        [0,1,0,0,0,0,0,1,0,0],
-        [0,1,1,3,0,0,0,1,0,0],
-        [0,0,0,1,0,0,1,2,0,0],
-        [0,0,0,1,0,0,1,0,0,0],
-        [0,0,2,1,0,1,0,0,2,0],
-        [0,1,0,1,0,1,0,0,1,0],
-        [0,1,1,1,0,1,1,1,1,0]
-    ],
-    4: [
-        [0,1,0,1,0,3,0,0,2,0],
-        [0,1,0,1,0,1,3,0,1,0],
-        [0,1,2,1,0,1,0,0,1,2],
-        [0,1,0,0,0,0,0,2,0,0],
-        [0,1,0,0,0,0,2,1,0,0],
-        [0,1,0,3,0,0,0,1,0,0],
-        [0,0,0,1,2,3,0,1,0,0],
-        [0,0,0,1,0,1,0,1,2,0],
-        [0,0,2,3,0,1,0,1,0,0],
-        [0,1,0,1,0,1,0,1,3,0],
-        [0,1,0,1,0,1,0,1,3,0]
-    ]
+    // 0: [
+    //     [1,1,1,1,1,0,0],
+    //     [1,0,0,0,0,0,0],
+    //     [0,0,0,0,0,0,2],
+    //     [0,2,0,0,0,0,0],
+    //     [0,0,0,0,0,0,0],
+    //     [1,1,1,0,0,0,0],
+    //     [0,0,0,2,0,0,0],
+    //     [0,0,0,0,0,0,0],
+    //     [2,0,0,0,0,0,0],
+    //     [3,0,0,0,0,2,0],
+    //     [0,0,1,1,1,0,0]
+    // ],
+    // 1: [
+    //     [1,1,1,1,1,0,0],
+    //     [0,0,0,0,0,0,2],
+    //     [1,1,0,0,0,0,0],
+    //     [0,0,0,0,0,2,1],
+    //     [0,0,0,0,0,1,1],
+    //     [1,1,0,0,0,0,0],
+    //     [0,0,0,0,0,0,0],
+    //     [0,0,0,0,0,0,0],
+    //     [0,0,2,0,0,0,0],
+    //     [0,2,0,0,0,0,0],
+    //     [0,0,1,1,1,0,0]
+    // ],
+    // 2: [
+    //     [1,1,1,1,1,1,1,1,1,1],
+    //     [0,0,0,0,0,0,2,0,0,1],
+    //     [0,0,1,0,0,0,0,0,0,1],
+    //     [1,0,1,1,1,1,1,1,1,1],
+    //     [1,0,0,0,0,2,0,0,0,0],
+    //     [1,0,0,2,0,0,0,0,0,0],
+    //     [1,0,0,0,0,0,0,0,0,0],
+    //     [1,1,1,3,1,1,1,1,0,0],
+    //     [0,0,2,0,0,0,1,0,0,1],
+    //     [0,2,0,0,0,0,0,0,0,1],
+    //     [0,0,1,1,1,1,1,1,1,1]
+    // ],
+    // 3: [
+    //     [0,0,0,0,0,0,0,0,2,0],
+    //     [0,1,1,1,0,1,3,1,1,0],
+    //     [0,1,2,1,0,1,0,2,1,0],
+    //     [0,1,0,0,0,0,0,0,1,0],
+    //     [0,1,0,0,0,0,0,1,0,0],
+    //     [0,1,1,3,0,0,0,1,0,0],
+    //     [0,0,0,1,0,0,1,2,0,0],
+    //     [0,0,0,1,0,0,1,0,0,0],
+    //     [0,0,2,1,0,1,0,0,2,0],
+    //     [0,1,0,1,0,1,0,0,1,0],
+    //     [0,1,1,1,0,1,1,1,1,0]
+    // ],
+    // 4: [
+    //     [0,1,0,1,0,3,0,0,2,0],
+    //     [0,1,0,1,0,1,3,0,1,0],
+    //     [0,1,2,1,0,1,0,0,1,2],
+    //     [0,1,0,0,0,0,0,2,0,0],
+    //     [0,1,0,0,0,0,2,1,0,0],
+    //     [0,1,0,3,0,0,0,1,0,0],
+    //     [0,0,0,1,2,3,0,1,0,0],
+    //     [0,0,0,1,0,1,0,1,2,0],
+    //     [0,0,2,3,0,1,0,1,0,0],
+    //     [0,1,0,1,0,1,0,1,3,0],
+    //     [0,1,0,1,0,1,0,1,3,0]
+    // ]
 }
 
 

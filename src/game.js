@@ -41,38 +41,49 @@ export default class Game {
             this.currentLevel = 0
             this.gameoverTracker = true
             this.gameoverFrame()
+            // this.animate();
+
         } else {
             this.level = new Level(this.dimensions, currentLevel);
             this.player = new Player(this.dimensions, this.keysTracker, this.level);
             this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length  
             this.animate();
         }
+        // this.animate();
     }
 
     keyDownHandler(e) {
+        // console.log(this.running)
         this.keysTracker[e.keyCode] = true;
-        if (this.keysTracker["82"]&& !this.highestScoreMode){
-            debugger
+        // if (this.keysTracker["82"]&& !this.highestScoreMode){
+            if (this.keysTracker["82"]){
+                // gameoverPage.style.opacity = "0";  
+
+            // debugger
+            this.keysTracker["82"] = false
+            // console.log("1")
             if (this.gameoverTracker){
                 this.currentLevel = 0
                 this.startTime = Date.now()
                 this.running = false
                 this.numLife = 3
                 const gameoverPage = document.getElementById("gameover-box")
-                gameoverPage.style.opacity = "0";   
+                gameoverPage.style.opacity = "0";  
+                // console.log(this.numLife) 
             }  
-            debugger
-        
-                this.restart(this.currentLevel)
-                debugger
+            // debugger
+                this.restart(this.currentLevel)   
+                // debugger
         }
         else if(!this.running && !this.highestScoreMode){
+            // debugger
             this.play()
         }
     }
 
     keyUpHandler(e) {
         this.keysTracker[e.keyCode] = false;
+        // debugger
     }
     
     registerEvents() {
@@ -121,6 +132,7 @@ export default class Game {
         this.drawTimer()
         this.drawText()
         this.drawCounter()
+        // console.log(this.running)
         if(this.player.collideWithBomb()){
             this.restart(this.currentLevel);
             this.hitBomb = true;
@@ -218,7 +230,7 @@ export default class Game {
         gamePage.style.backgroundColor = 'orange'
         const gameoverBox = document.getElementById('gameover-box')
         gameoverBox.style.transition = 'all 1s ease-in-out;'
-        gameoverBox.style.opacity = 1;
+        gameoverBox.style.opacity = 0.5;
         let gameoverMessageP = document.createElement('p')
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
@@ -245,7 +257,11 @@ export default class Game {
         let name = ''
         // debugger
         if((gameScore < lowestRecord || scores.length < 5) && this.numLife > 1) {
-            this.highestScoreMode = true
+            debugger
+
+            // if (this.numLife > 1) {
+            // this.highestScoreMode = true
+
             let recordSubmissionDiv = document.getElementById("record-submission") 
             recordSubmissionDiv.innerHTML = ''
             let highScoreMessageP = document.createElement('p')
@@ -262,9 +278,10 @@ export default class Game {
             submitButton.innerHTML = 'Submit' 
             recordSubmissionDiv.appendChild(submitButton)
             submitButton.addEventListener('click', e => {
-                this.highestScoreMode = false
+                // this.highestScoreMode = false
                 submitScore(name, gameScore)
             })
+            // }
         } 
     }
 
