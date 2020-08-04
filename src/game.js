@@ -223,14 +223,16 @@ export default class Game {
     }
 
     gameoverFrame(){
-       
+        let recordSubmissionDiv = document.getElementById("record-submission") 
+        recordSubmissionDiv.innerHTML = ''
+
         let gameScore = this.timer
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         const gamePage = document.getElementById('game-page')
         gamePage.style.backgroundColor = 'orange'
         const gameoverBox = document.getElementById('gameover-box')
         gameoverBox.style.transition = 'all 1s ease-in-out;'
-        gameoverBox.style.opacity = 0.5;
+        gameoverBox.style.opacity = 1;
         let gameoverMessageP = document.createElement('p')
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
@@ -255,15 +257,14 @@ export default class Game {
 
         let lowestRecord = Math.max(...highScores)
         let name = ''
-        // debugger
+        // console.log(scores.length)
+        // console.log(lowestRecord)
         if((gameScore < lowestRecord || scores.length < 5) && this.numLife > 1) {
-            debugger
+            // debugger
 
             // if (this.numLife > 1) {
             // this.highestScoreMode = true
 
-            let recordSubmissionDiv = document.getElementById("record-submission") 
-            recordSubmissionDiv.innerHTML = ''
             let highScoreMessageP = document.createElement('p')
             highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our Best Records board ☺' 
             recordSubmissionDiv.appendChild(highScoreMessageP)
