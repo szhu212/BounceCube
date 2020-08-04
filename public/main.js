@@ -523,7 +523,6 @@ class Level {
                     this.targets[[row, col]] = targetColor
                     if(Object(_util__WEBPACK_IMPORTED_MODULE_0__["_overlap"])(player.bounds(), currentTarget)){
                         Object(_util__WEBPACK_IMPORTED_MODULE_0__["playBeep"])()
-                        // console.log(playingMusic)
                         this.level[row][col] = 0
                         this.color = currentTarget.color
                         const gamePage = document.getElementById('game-page')
