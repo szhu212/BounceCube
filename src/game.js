@@ -146,7 +146,7 @@ export default class Game {
         if (this.running) {
             setTimeout(function() {
                  requestAnimationFrame(this.animate.bind(this))
-            }.bind(this), 1000/125);
+            }.bind(this), 1000/120);
 
 
             // requestAnimationFrame(this.animate.bind(this))
