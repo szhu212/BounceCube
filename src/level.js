@@ -71,7 +71,7 @@ export default class Level {
                     this.targets[[row, col]] = targetColor
                     if(_overlap(player.bounds(), currentTarget)){
                         playBeep()
-                        console.log(playingMusic)
+                        // console.log(playingMusic)
                         this.level[row][col] = 0
                         this.color = currentTarget.color
                         const gamePage = document.getElementById('game-page')
