@@ -154,11 +154,10 @@ class Game {
     }
 
     keyDownHandler(e) {
-        // console.log(this.running)
         this.keysTracker[e.keyCode] = true;
-        // if (this.keysTracker["82"]&& !this.highestScoreMode){
             if (this.keysTracker["82"]){
-                // gameoverPage.style.opacity = "0";  
+                const gameoverPage = document.getElementById("gameover-box")
+                gameoverPage.style.opacity = "0";  
 
             // debugger
             this.keysTracker["82"] = false
@@ -168,9 +167,6 @@ class Game {
                 this.startTime = Date.now()
                 this.running = false
                 this.numLife = 3
-                const gameoverPage = document.getElementById("gameover-box")
-                gameoverPage.style.opacity = "0";  
-                // console.log(this.numLife) 
             }  
             // debugger
                 this.restart(this.currentLevel)   
