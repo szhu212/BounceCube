@@ -27,7 +27,6 @@ export default class Level {
                 if(this.level[row][col] === 1){
                     const image = new Image();
                     image.src = './brick.png';
-                    // debugger
                     image.onload = function () {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
                     }

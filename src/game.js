@@ -30,7 +30,6 @@ export default class Game {
       }
 
     restart(currentLevel) {
-        // debugger
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
@@ -42,7 +41,6 @@ export default class Game {
             this.currentLevel = 0
             this.gameoverTracker = true
             this.gameoverFrame()
-            // this.animate();
 
         } else {
             this.level = new Level(this.dimensions, currentLevel);
@@ -50,7 +48,6 @@ export default class Game {
             this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length  
             this.animate();
         }
-        // this.animate();
     }
 
     keyDownHandler(e) {
@@ -59,30 +56,23 @@ export default class Game {
                 const gameoverPage = document.getElementById("gameover-box")
                 gameoverPage.style.opacity = "0";  
 
-            // debugger
             this.keysTracker["82"] = false
-            // this.textTimer = 200
             this.hitBomb = false
-            // console.log("1")
             if (this.gameoverTracker){
                 this.currentLevel = 0
                 this.startTime = Date.now()
                 this.running = false
                 this.numLife = 3
             }  
-            // debugger
                 this.restart(this.currentLevel)   
-                // debugger
         }
         else if(!this.running && !this.highestScoreMode){
-            // debugger
             this.play()
         }
     }
 
     keyUpHandler(e) {
         this.keysTracker[e.keyCode] = false;
-        // debugger
     }
     
     registerEvents() {
@@ -131,7 +121,6 @@ export default class Game {
         this.drawTimer()
         this.drawText()
         this.drawCounter()
-        // console.log(this.running)
         if(this.player.collideWithBomb()){
             this.restart(this.currentLevel);
             this.hitBomb = true;
@@ -146,7 +135,7 @@ export default class Game {
         if (this.running) {
             setTimeout(function() {
                  requestAnimationFrame(this.animate.bind(this))
-            }.bind(this), 1000/120);
+            }.bind(this), 1000/60);
 
 
             // requestAnimationFrame(this.animate.bind(this))
@@ -256,14 +245,7 @@ export default class Game {
 
         let lowestRecord = Math.max(...highScores)
         let name = ''
-        // console.log(scores.length)
-        // console.log(lowestRecord)
         if((gameScore < lowestRecord || scores.length < 5) && this.numLife > 1) {
-            // debugger
-
-            // if (this.numLife > 1) {
-            // this.highestScoreMode = true
-
             let highScoreMessageP = document.createElement('p')
             highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our Best Records board ☺' 
             recordSubmissionDiv.appendChild(highScoreMessageP)
@@ -278,10 +260,8 @@ export default class Game {
             submitButton.innerHTML = 'Submit' 
             recordSubmissionDiv.appendChild(submitButton)
             submitButton.addEventListener('click', e => {
-                // this.highestScoreMode = false
                 submitScore(name, gameScore)
             })
-            // }
         } 
     }
 

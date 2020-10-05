@@ -131,7 +131,6 @@ class Game {
       }
 
     restart(currentLevel) {
-        // debugger
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
@@ -143,7 +142,6 @@ class Game {
             this.currentLevel = 0
             this.gameoverTracker = true
             this.gameoverFrame()
-            // this.animate();
 
         } else {
             this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions, currentLevel);
@@ -151,7 +149,6 @@ class Game {
             this.totalTarget = _util__WEBPACK_IMPORTED_MODULE_2__["LEVELS"][this.currentLevel].flat().filter(el => el ===2).length  
             this.animate();
         }
-        // this.animate();
     }
 
     keyDownHandler(e) {
@@ -160,30 +157,23 @@ class Game {
                 const gameoverPage = document.getElementById("gameover-box")
                 gameoverPage.style.opacity = "0";  
 
-            // debugger
             this.keysTracker["82"] = false
-            // this.textTimer = 200
             this.hitBomb = false
-            // console.log("1")
             if (this.gameoverTracker){
                 this.currentLevel = 0
                 this.startTime = Date.now()
                 this.running = false
                 this.numLife = 3
             }  
-            // debugger
                 this.restart(this.currentLevel)   
-                // debugger
         }
         else if(!this.running && !this.highestScoreMode){
-            // debugger
             this.play()
         }
     }
 
     keyUpHandler(e) {
         this.keysTracker[e.keyCode] = false;
-        // debugger
     }
     
     registerEvents() {
@@ -232,7 +222,6 @@ class Game {
         this.drawTimer()
         this.drawText()
         this.drawCounter()
-        // console.log(this.running)
         if(this.player.collideWithBomb()){
             this.restart(this.currentLevel);
             this.hitBomb = true;
@@ -247,7 +236,7 @@ class Game {
         if (this.running) {
             setTimeout(function() {
                  requestAnimationFrame(this.animate.bind(this))
-            }.bind(this), 1000/120);
+            }.bind(this), 1000/60);
 
 
             // requestAnimationFrame(this.animate.bind(this))
@@ -357,14 +346,7 @@ class Game {
 
         let lowestRecord = Math.max(...highScores)
         let name = ''
-        // console.log(scores.length)
-        // console.log(lowestRecord)
         if((gameScore < lowestRecord || _util__WEBPACK_IMPORTED_MODULE_2__["scores"].length < 5) && this.numLife > 1) {
-            // debugger
-
-            // if (this.numLife > 1) {
-            // this.highestScoreMode = true
-
             let highScoreMessageP = document.createElement('p')
             highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our Best Records board ☺' 
             recordSubmissionDiv.appendChild(highScoreMessageP)
@@ -379,10 +361,8 @@ class Game {
             submitButton.innerHTML = 'Submit' 
             recordSubmissionDiv.appendChild(submitButton)
             submitButton.addEventListener('click', e => {
-                // this.highestScoreMode = false
                 Object(_util__WEBPACK_IMPORTED_MODULE_2__["submitScore"])(name, gameScore)
             })
-            // }
         } 
     }
 
@@ -478,7 +458,6 @@ class Level {
                 if(this.level[row][col] === 1){
                     const image = new Image();
                     image.src = './brick.png';
-                    // debugger
                     image.onload = function () {
                         ctx.drawImage(image, leftStart, upStart, wallWidth, wallHeight);
                     }
@@ -575,7 +554,6 @@ class Player {
         this.velY = 0; 
         this.keysTracker = keysTracker;
         this.level = level;
-        // this.onGround = false;
         this.collisionAdj = 0;
         this.levelOver = false
     }
@@ -588,12 +566,9 @@ class Player {
 
     updatePlayer(keysTracker) {
         if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].UP]){
-            // this.onGround = false;
-             this.velY -= 1 * _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].UP_SPEED 
-             
+             this.velY -= 1 * _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].UP_SPEED   
         }
         if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].LEFT]) {  
-            // debugger          
             this.velX -= _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].HORIZENTAL_SPEED 
         }
         if (keysTracker[_util__WEBPACK_IMPORTED_MODULE_0__["KEYS"].RIGHT]){         
@@ -627,14 +602,7 @@ class Player {
         if (this.collideWithBrick()){
             this.resolveCollision()
         }
-    // if(this.onGround) {
-    //     this.velY = 0;
-    // }
-// console.log(timestamp)
-        // console.log(`velY ${this.velY}`)
-        // console.log(`this.y ${this.y}`)
-        // console.log(`velX ${this.velX}`)
-        // console.log(`this.x ${this.x}`)
+ 
         this.x += this.velX
         this.y += this.velY
         if (this.x > this.dimensions.width - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_WIDTH - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH) {            this.x = this.dimensions.width - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].PLAYER_WIDTH - _util__WEBPACK_IMPORTED_MODULE_0__["CONSTANTS"].BOARDER_WIDTH
@@ -661,14 +629,12 @@ class Player {
 
     animate(ctx, keysTracker) {
         this.updatePlayer(keysTracker);
-        // this.pushPlayer(keysTracker);
         this.drawPlayer(ctx);
       
     }
 
     collideWithBrick(){
         let collision = false;
-        // debugger
         Object.values(this.level.bricks).forEach(
             brick => {
             if (Object(_util__WEBPACK_IMPORTED_MODULE_0__["_overlap"])(brick, this.bounds())){
@@ -735,9 +701,6 @@ class Player {
                     }
                     else {
                         collisionDir[1] = "bottom";
-                        // rect1.y -= distY;
-                       
-                        // console.log(rect1.y)
                         this.collisionAdj = -distY
                     }
                 }
@@ -761,7 +724,6 @@ class Player {
     }
 
     resolveCollision(){
-        // console.log(this.collisionDir())
         if (this.collideWithBrick()){
             if (this.collisionDir()[0] === "right"){
                 this.x += this.collisionAdj
@@ -786,7 +748,6 @@ class Player {
             }
             if (this.collisionDir()[1] === "bottom"){
                 this.y += this.collisionAdj
-                // this.onGround = true;
                  if(this.velY<0 && this.velY > -2){
                 this.velY =0 
                } else {
