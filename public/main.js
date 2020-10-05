@@ -134,6 +134,8 @@ class Game {
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
+            this.numLife = 3 //updated Oct 5
+            this.timer = 0 //updated Oct 5
         }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
@@ -236,9 +238,7 @@ class Game {
         if (this.running) {
             setTimeout(function() {
                  requestAnimationFrame(this.animate.bind(this))
-            }.bind(this), 1000/60);
-
-
+            }.bind(this), 1000/100);
             // requestAnimationFrame(this.animate.bind(this))
             // requestAnimationFrame
         }
@@ -312,6 +312,7 @@ class Game {
     }
 
     gameoverFrame(){
+        this.running = false; //updated Oct 5
         let recordSubmissionDiv = document.getElementById("record-submission") 
         recordSubmissionDiv.innerHTML = ''
 
@@ -329,6 +330,7 @@ class Game {
         if (this.numLife > 1) {
             gameoverH2.innerHTML = 'You Won!'
             gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all levels. Congratulations!`
+            this.numLife = 3 //updated Oct 5
         } else {
             gameoverH2.innerHTML = 'Gameover !'
             gameoverMessageP.innerHTML = `All 3 lives are used up. Wish you better luck next time!`
