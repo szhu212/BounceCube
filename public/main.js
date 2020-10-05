@@ -352,6 +352,7 @@ class Game {
             let highScoreMessageP = document.createElement('p')
             highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our Best Records board ☺' 
             recordSubmissionDiv.appendChild(highScoreMessageP)
+            // this.timer = 0 //updated Oct 5
             let nameInput = document.createElement('input')
             nameInput.type = 'text'
             nameInput.placeholder = 'Please enter your name here'
