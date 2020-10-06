@@ -134,8 +134,8 @@ class Game {
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
-            this.numLife = 3 //updated Oct 5
-            this.timer = 0 //updated Oct 5
+            // this.numLife = 3 //updated Oct 5
+            // this.timer = 0 //updated Oct 5
         }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
@@ -151,6 +151,7 @@ class Game {
             this.totalTarget = _util__WEBPACK_IMPORTED_MODULE_2__["LEVELS"][this.currentLevel].flat().filter(el => el ===2).length  
             this.animate();
         }
+        this.levelUp = false; //updated Oct 5
     }
 
     keyDownHandler(e) {
@@ -166,8 +167,9 @@ class Game {
                 this.startTime = Date.now()
                 this.running = false
                 this.numLife = 3
+                this.restart(this.currentLevel)  //updated Oct 5
             }  
-                this.restart(this.currentLevel)   
+            //    this.restart(this.currentLevel)   //commented out Oct 5
         }
         else if(!this.running && !this.highestScoreMode){
             this.play()
@@ -216,6 +218,7 @@ class Game {
 
 
     animate() {
+        // this.levelUp = false; //updated Oct 5
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.level.animate(this.ctx, this.player)
@@ -312,6 +315,7 @@ class Game {
     }
 
     gameoverFrame(){
+        // debugger
         this.running = false; //updated Oct 5
         let recordSubmissionDiv = document.getElementById("record-submission") 
         recordSubmissionDiv.innerHTML = ''
