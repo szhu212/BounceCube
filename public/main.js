@@ -167,9 +167,9 @@ class Game {
                 this.startTime = Date.now()
                 this.running = false
                 this.numLife = 3
-                this.restart(this.currentLevel)  //updated Oct 5
+                // this.restart(this.currentLevel)  //updated Oct 5
             }  
-            //    this.restart(this.currentLevel)   //commented out Oct 5
+               this.restart(this.currentLevel)   //commented out Oct 5
         }
         else if(!this.running && !this.highestScoreMode){
             this.play()
