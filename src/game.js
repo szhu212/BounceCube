@@ -30,11 +30,21 @@ export default class Game {
       }
 
     restart(currentLevel) {
+        // if (currentLevel === 0 && this.timer === 0){/// Oct 5
+        //             this.startTime = Date.now()/// Oct 5
+        //             this.running = false/// Oct 5
+        //             this.numLife = 3 /// Oct 5
+        // } /// Oct 5
+        // if (currentLevel < LEVELS.length ){this.hitBomb = false}
+        console.log(this.gameoverTracker)
+        console.log(this.currentLevel)
+        console.log(this.numLife)
+        console.log(this.timer)
+        // debugger
+        // if (this.currentLevel > LEVELS.length ) { this.currentLevel = 0} //updated Oct 5
         this.gameoverTracker = false
         if (!this.levelUp){
             this.running = false;
-            // this.numLife = 3 //updated Oct 5
-            // this.timer = 0 //updated Oct 5
         }
         this.startTime = this.startTime || Date.now();
         this.textTimer = 0
@@ -55,20 +65,24 @@ export default class Game {
 
     keyDownHandler(e) {
         this.keysTracker[e.keyCode] = true;
-            if (this.keysTracker["82"]){
-                const gameoverPage = document.getElementById("gameover-box")
-                gameoverPage.style.opacity = "0";  
+        if (this.keysTracker["82"]){
+            // const gameoverPage = document.getElementById("gameover-box")
+            // gameoverPage.style.opacity = "0";  //moved down Oct 5
 
             this.keysTracker["82"] = false
             this.hitBomb = false
-            if (this.gameoverTracker){
-                this.currentLevel = 0
-                this.startTime = Date.now()
-                this.running = false
-                this.numLife = 3
-                // this.restart(this.currentLevel)  //updated Oct 5
-            }  
-               this.restart(this.currentLevel)   //commented out Oct 5
+            // if (this.gameoverTracker){
+            //     debugger
+            //         this.currentLevel = 0
+            //         this.startTime = Date.now()
+            //         this.running = false
+            //         this.numLife = 3
+            //         this.restart(this.currentLevel)  //updated Oct 5
+            // }  
+            const gameoverPage = document.getElementById("gameover-box")//moved  Oct 5
+            gameoverPage.style.opacity = "0";  ////moved  Oct 5
+
+            //    this.restart(this.currentLevel)   //commented out Oct 5
         }
         else if(!this.running && !this.highestScoreMode){
             this.play()
@@ -126,6 +140,14 @@ export default class Game {
         this.drawTimer()
         this.drawText()
         this.drawCounter()
+        if (this.gameoverTracker){
+            // debugger
+                this.currentLevel = 0
+                this.startTime = Date.now()
+                this.running = false
+                this.numLife = 3
+                this.restart(this.currentLevel)  //updated Oct 5
+        }  
         if(this.player.collideWithBomb()){
             this.restart(this.currentLevel);
             this.hitBomb = true;
@@ -173,6 +195,8 @@ export default class Game {
             this.ctx.fillText("← Your Cube", 20,this.canvas.height -5)
             this.ctx.restore();
         }
+        if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false} // moved up to here Oct 5
+
         if ((this.textTimer < 150 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
             if (this.hitBomb){
                 this.ctx.save()
@@ -206,19 +230,19 @@ export default class Game {
         } else {
             this.textTimer += 1
         }
-        if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false}
+        // if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false} commented out Oct 5
     }
 
     gameover(){
-        return this.currentLevel >= Object.keys(LEVELS).length || this.numLife < 2
+        return this.currentLevel >= Object.keys(LEVELS).length || (this.numLife < 2 && !this.levelUp)
+        // return this.currentLevel >= Object.keys(LEVELS).length || this.numLife < 1 //updated Oct 5
     }
 
     gameoverFrame(){
         // debugger
-        this.running = false; //updated Oct 5
+        // this.running = false; //updated Oct 5
         let recordSubmissionDiv = document.getElementById("record-submission") 
         recordSubmissionDiv.innerHTML = ''
-
         let gameScore = this.timer
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         const gamePage = document.getElementById('game-page')
@@ -230,18 +254,21 @@ export default class Game {
         let minutes = Math.floor(this.timer / 60)
         let seconds = Math.floor(this.timer % 60)
         const gameoverH2 = document.getElementById("gameover-title")
-        if (this.numLife > 1) {
+        if (this.numLife >= 1) { // Updated Oct 5
+            // if (this.numLife > 1) {
+            // debugger
             gameoverH2.innerHTML = 'You Won!'
             gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all levels. Congratulations!`
-            this.numLife = 3 //updated Oct 5
+            // this.numLife = 3 //updated Oct 5
         } else {
+            // debugger
             gameoverH2.innerHTML = 'Gameover !'
             gameoverMessageP.innerHTML = `All 3 lives are used up. Wish you better luck next time!`
         }
         const  gameoverMessage = document.getElementById("gameover-messsage")
         gameoverMessage.innerHTML = '';
         gameoverMessage.appendChild(gameoverMessageP)
-        
+
         gameoverH2.style.animation = "shake 0.5s";
         gameoverH2.style.animationIterationCount = 2.5;
         let highScores = []
@@ -255,7 +282,6 @@ export default class Game {
             let highScoreMessageP = document.createElement('p')
             highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our Best Records board ☺' 
             recordSubmissionDiv.appendChild(highScoreMessageP)
-            // this.timer = 0 //updated Oct 5
             let nameInput = document.createElement('input')
             nameInput.type = 'text'
             nameInput.placeholder = 'Please enter your name here'
@@ -270,6 +296,7 @@ export default class Game {
                 submitScore(name, gameScore)
             })
         } 
+        // this.numLife = 3 //updated Oct 5
     }
 
 }
