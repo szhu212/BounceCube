@@ -1,66 +1,60 @@
 import Player from "./player"
 import Level from "./level"
-import { levelInstruction, LEVELS, scores, submitScore} from "./util"
+import {levelInstruction, LEVELS, scores, submitScore} from "./util"
 
 export default class Game {
 
     constructor(canvas){
         this.ctx = canvas.getContext("2d");
-        this.canvas = canvas
+        this.canvas = canvas;
         this.dimensions = { width: canvas.width, height: canvas.height };
         this.keysTracker = {};
-        this.running = false;
-        this.currentLevel = 0 
-        this.totalTarget = 0 
+        this.isRunning = false;
+        this.currentLevel = 0; 
+        this.totalTarget = 0;
+        this.numLife = 3;
         this.registerEvents();
-        this.restart(this.currentLevel);
-        this.levelUp = false;
-        this.gameoverTracker = false;
+        this.startGame();
+        this.isGameOver = false;
+        this.isGameLost = false;
         this.scores = [];
-        this.highestScoreMode = false; 
         this.playingMusic = false;
         this.animate = this.animate.bind(this);
-        this.numLife = 3;
+        this.roundStartTime;
+        this.hitBomb = false;
+        this.finalScore;
     }
 
     play() {
-        this.running = true;
-        if (Object.values(this.keysTracker).length > 0 && Object.values(this.keysTracker).some(val => val ===true))
-        {this.animate()};
-      }
+        this.isRunning = true;
+        this.animate();
+    }
+    
+    // to start a new game
+    startGame(){
+        this.currentLevel = 0
+        this.roundStartTime = Date.now()
+        this.isGameOver = false;
+        this.isGameLost = false;
+        this.isRunning = false;
+        this.startTime = Date.now();
+        this.numLife = 3
+        this.level = new Level(this.dimensions, 0)
+        this.player = new Player(this.dimensions, this.keysTracker, this.level)
+        this.totalTarget = LEVELS[0].flat().filter(el => el ===2).length
+        this.level.animate(this.ctx, this.player)
+        this.player.animate(this.ctx, this.keysTracker)
+        this.drawGameStartText()
+        this.drawTimer()
+        this.drawCounter()
+    }
 
-    restart(currentLevel) {
-        // if (currentLevel === 0 && this.timer === 0){/// Oct 5
-        //             this.startTime = Date.now()/// Oct 5
-        //             this.running = false/// Oct 5
-        //             this.numLife = 3 /// Oct 5
-        // } /// Oct 5
-        // if (currentLevel < LEVELS.length ){this.hitBomb = false}
-        console.log(this.gameoverTracker)
-        console.log(this.currentLevel)
-        console.log(this.numLife)
-        console.log(this.timer)
-        // debugger
-        // if (this.currentLevel > LEVELS.length ) { this.currentLevel = 0} //updated Oct 5
-        this.gameoverTracker = false
-        if (!this.levelUp){
-            this.running = false;
-        }
-        this.startTime = this.startTime || Date.now();
-        this.textTimer = 0
-        this.numTargets = 1
-        if(this.gameover()){
-            this.currentLevel = 0
-            this.gameoverTracker = true
-            this.gameoverFrame()
-
-        } else {
-            this.level = new Level(this.dimensions, currentLevel);
-            this.player = new Player(this.dimensions, this.keysTracker, this.level);
-            this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length  
-            this.animate();
-        }
-        this.levelUp = false; //updated Oct 5
+    // to start a level (restart current level or start the next level)
+    startNewLevel(currentLevel){
+        this.isRunning = false;
+        this.level = new Level(this.dimensions, currentLevel);
+        this.player = new Player(this.dimensions, this.keysTracker, this.level);
+        this.totalTarget = LEVELS[this.currentLevel].flat().filter(el => el ===2).length;  
     }
 
     keyDownHandler(e) {
@@ -71,20 +65,17 @@ export default class Game {
 
             this.keysTracker["82"] = false
             this.hitBomb = false
-            // if (this.gameoverTracker){
-            //     debugger
-            //         this.currentLevel = 0
-            //         this.startTime = Date.now()
-            //         this.running = false
-            //         this.numLife = 3
-            //         this.restart(this.currentLevel)  //updated Oct 5
-            // }  
+            
             const gameoverPage = document.getElementById("gameover-box")//moved  Oct 5
             gameoverPage.style.opacity = "0";  ////moved  Oct 5
-
-            //    this.restart(this.currentLevel)   //commented out Oct 5
+            if(this.isGameOver || this.isGameLost){
+                this.startGame()
+            }
         }
-        else if(!this.running && !this.highestScoreMode){
+        if(!this.isRunning && !this.isGameOver && !this.isGameLost){
+            if(this.currentLevel === 0 && this.hitBomb === false){
+                this.startTime = Date.now()
+            }
             this.play()
         }
     }
@@ -106,70 +97,95 @@ export default class Game {
 
     drawTimer(){
         this.timer = Math.floor((Date.now() - this.startTime)/1000)
-        if (this.textTimer === 0 && this.currentLevel === 0){this.timer = 0}
+        if (this.timeSinceRoundStart === 0 && this.currentLevel === 0){this.timer = 0}
         this.ctx.font = '20px Dosis'
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
         this.ctx.strokeStyle = 'skyblue';
-        this.ctx.fillText(`${this.timer}`, this.canvas.width -60, 20);
-        this.ctx.strokeText(`${this.timer}`, this.canvas.width -60, 20);
+        this.ctx.fillText(`${this.timer}`, this.canvas.width - 60, 20);
+        this.ctx.strokeText(`${this.timer}`, this.canvas.width - 60, 20);
 
     }
 
     drawCounter(){
-        let counterText = `${this.numTargets}/${this.totalTarget}`
+        let numTarget = this.numTargets || 4
+        let counterText = `${numTarget}/${this.totalTarget}` 
         this.ctx.font = '20px Dosis';
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
         this.ctx.strokeStyle = 'skyblue';
         this.ctx.fillText(counterText, this.canvas.width -60, 50);
         this.ctx.strokeText(counterText, this.canvas.width -60, 50);
         let numLife = this.numLife || 3
-        this.ctx.strokeStyle = 'orange';
+        this.ctx.strokeStyle = 'skyblue';
         let textLife = (numLife === 1) ?  'Life' : 'Lives'
         this.ctx.fillText(`${numLife}/3 ${textLife}`, this.canvas.width -90, this.canvas.height -10);
         this.ctx.strokeText(`${numLife}/3 ${textLife}`, this.canvas.width -90, this.canvas.height -10);
      }
 
 
-    animate() {
-        // this.levelUp = false; //updated Oct 5
+    animate(){
+        // console.log('over')
+     
+
+        // console.log(this.isGameOver)
+        // console.log('lost')
+        // console.log(this.isGameLost)
+        if (this.isGameOver){
+            this.isRunning = false;
+            this.gameoverFrame(this.finalScore)
+        }
+        if(this.isGameLost){
+            this.isRunning = false;
+            this.gameLostFrame()
+        }  
+
+        // if the player hits a bomb, restart current level, and reduce number of lives left by one
+        if(this.player.collideWithBomb()){
+            this.hitBomb = true;
+            this.numLife -= 1
+
+            if(this.gameover()){
+                this.currentLevel = 0
+                this.isGameLost = true
+            }else{
+                this.roundStartTime = Date.now()
+                this.startNewLevel(this.currentLevel)
+            }
+        }
+
+        // if all targets are cleared, start the next level. If there is no more new level, go to gameover frame
+        if (this.numTargets === 0) {
+            this.currentLevel += 1;
+            if(this.gameover()){
+                this.finalScore = this.timer.toString()////
+                this.currentLevel = 0
+                this.isGameOver = true
+            }else{
+                this.startNewLevel(this.currentLevel)
+            }
+        }
         this.ctx.font = 'Dosis'
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.level.animate(this.ctx, this.player)
         this.player.animate(this.ctx, this.keysTracker)
         this.numTargets = this.level.numTargets
         this.drawTimer()
-        this.drawText()
+        // this.drawText()
+        // console.log(this.timeSinceRoundStart())
+        // if (this.timeSinceRoundStart()< 5)
+        // {this.drawLevelUpText()}
+        // this.drawGameStartText()
         this.drawCounter()
-        if (this.gameoverTracker){
-            // debugger
-                this.currentLevel = 0
-                this.startTime = Date.now()
-                this.running = false
-                this.numLife = 3
-                this.restart(this.currentLevel)  //updated Oct 5
-        }  
-        if(this.player.collideWithBomb()){
-            this.restart(this.currentLevel);
-            this.hitBomb = true;
-            this.numLife -= 1
-            this.drawText()
+        if (this.hitBomb) {
+            this.drawHitBombText();
         }
-        if (this.numTargets === 0 && !this.gameoverTracker) {
-            this.currentLevel += 1;
-            this.levelUp = true;
-            this.restart(this.currentLevel)
-        }
-        if (this.running) {
+        if (this.isRunning) {
             setTimeout(function() {
                  requestAnimationFrame(this.animate.bind(this))
             }.bind(this), 1000/100);
-            // requestAnimationFrame(this.animate.bind(this))
-            // requestAnimationFrame
         }
     }
 
-    levelUpText(){
-        this.textTimer += 1
+    drawLevelUpText(){
         this.ctx.save()
         this.ctx.font = '38px Dosis'
         this.ctx.fillStyle = 'white';
@@ -183,8 +199,8 @@ export default class Game {
         this.ctx.restore();
     }
 
-    drawText(){
-        if (this.textTimer ===0) {
+    drawGameStartText(){
+        if (this.isRunning === false && this.currentLevel === 0) {
             this.ctx.save()
             this.ctx.font = '25px Dosis'
             this.ctx.fillStyle = 'rgba(255,255,255)';
@@ -195,8 +211,41 @@ export default class Game {
             this.ctx.fillText("← Your Cube", 20,this.canvas.height -5)
             this.ctx.restore();
         }
-        if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false} // moved up to here Oct 5
+    }
 
+    drawHitBombText(){
+     
+        if (this.timeSinceRoundStart() < 5){
+            this.ctx.save()
+                this.ctx.font = '25px Dosis'
+                this.ctx.fillStyle = 'red';
+                this.ctx.strokeStyle = 'white'
+                let textLife = (this.numLife === 1) ?  'life' : 'lives'
+                this.ctx.fillText(
+                    "Oops! You hit the bomb, level restarted", 
+                    this.canvas.width / 12,this.canvas.height / 5, 
+                    this.canvas.width * 5 / 6
+                    )
+                this.ctx.fillText(
+                    `${this.numLife} ${textLife} left`, 
+                    this.canvas.width / 3,this.canvas.height / 2
+                    )
+                this.ctx.strokeText(
+                    "Oops! You hit the bomb, level restarted", 
+                    this.canvas.width / 12,this.canvas.height / 5, 
+                    this.canvas.width * 5 / 6
+                )
+                this.ctx.strokeText(
+                    `${this.numLife} ${textLife} left`, 
+                    this.canvas.width / 3,this.canvas.height / 2 
+                    )
+                this.ctx.restore();
+        } else {
+            this.hitBomb = false;
+        }   
+    }
+    //TODO: Break this into multiple draw...Text(). Instead of using this.textTime use timeSincePassed round start.
+    drawText(){
         if ((this.textTimer < 150 && this.currentLevel !== 0) || (this.currentLevel === 0 && this.textTimer < 100 && this.textTimer >0)){
             if (this.hitBomb){
                 this.ctx.save()
@@ -230,20 +279,42 @@ export default class Game {
         } else {
             this.textTimer += 1
         }
-        // if (this.textTimer >= 200 && this.hitBomb){ this.hitBomb = false} commented out Oct 5
     }
 
     gameover(){
-        return this.currentLevel >= Object.keys(LEVELS).length || (this.numLife < 2 && !this.levelUp)
-        // return this.currentLevel >= Object.keys(LEVELS).length || this.numLife < 1 //updated Oct 5
+        console.log('cur level ')
+        console.log(this.currentLevel)
+        console.log('level len ')
+        console.log(Object.keys(LEVELS).length)
+        // console.log('life < 1')
+        // console.log(this.numLife < 1)
+        return this.currentLevel >= Object.keys(LEVELS).length || (this.numLife < 1)
     }
 
-    gameoverFrame(){
-        // debugger
-        // this.running = false; //updated Oct 5
+    //TODO: Get rid of unused stuff.
+    gameLostFrame(){
         let recordSubmissionDiv = document.getElementById("record-submission") 
         recordSubmissionDiv.innerHTML = ''
-        let gameScore = this.timer
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        const gamePage = document.getElementById('game-page')
+        gamePage.style.backgroundColor = 'orange'
+        const gameoverBox = document.getElementById('gameover-box')
+        gameoverBox.style.transition = 'all 1s ease-in-out;'
+        gameoverBox.style.opacity = 1;
+        let gameoverMessageP = document.createElement('p')
+        const gameoverH2 = document.getElementById("gameover-title")
+        gameoverH2.innerHTML = 'Gameover !'
+        gameoverMessageP.innerHTML = `All 3 lives are used up. Wish you better luck next time!`
+        const  gameoverMessage = document.getElementById("gameover-messsage")
+        gameoverMessage.innerHTML = '';
+        gameoverMessage.appendChild(gameoverMessageP)
+    }
+
+    //TODO: Refactor this. Make this cleaner. Get rid of game lost message stuff. 
+    gameoverFrame(finalScore){
+
+        let recordSubmissionDiv = document.getElementById("record-submission") 
+        recordSubmissionDiv.innerHTML = ''
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         const gamePage = document.getElementById('game-page')
         gamePage.style.backgroundColor = 'orange'
@@ -255,15 +326,8 @@ export default class Game {
         let seconds = Math.floor(this.timer % 60)
         const gameoverH2 = document.getElementById("gameover-title")
         if (this.numLife >= 1) { // Updated Oct 5
-            // if (this.numLife > 1) {
-            // debugger
             gameoverH2.innerHTML = 'You Won!'
             gameoverMessageP.innerHTML = `You spent ${minutes}M ${seconds}S to clear all levels. Congratulations!`
-            // this.numLife = 3 //updated Oct 5
-        } else {
-            // debugger
-            gameoverH2.innerHTML = 'Gameover !'
-            gameoverMessageP.innerHTML = `All 3 lives are used up. Wish you better luck next time!`
         }
         const  gameoverMessage = document.getElementById("gameover-messsage")
         gameoverMessage.innerHTML = '';
@@ -278,7 +342,12 @@ export default class Game {
 
         let lowestRecord = Math.max(...highScores)
         let name = ''
-        if((gameScore < lowestRecord || scores.length < 5) && this.numLife > 1) {
+        // console.log("finalScore")
+        // console.log(finalScore)
+        // console.log("lowestRecord" )
+        // console.log(lowestRecord )
+
+        if((finalScore < lowestRecord || scores.length < 5) && this.numLife >= 1) {
             let highScoreMessageP = document.createElement('p')
             highScoreMessageP.innerHTML = 'You score is among the top 5 in our history! Please enter you name to be on our Best Records board ☺' 
             recordSubmissionDiv.appendChild(highScoreMessageP)
@@ -293,10 +362,13 @@ export default class Game {
             submitButton.innerHTML = 'Submit' 
             recordSubmissionDiv.appendChild(submitButton)
             submitButton.addEventListener('click', e => {
-                submitScore(name, gameScore)
+                submitScore(name, finalScore)
             })
         } 
-        // this.numLife = 3 //updated Oct 5
+    }
+    
+    timeSinceRoundStart(){
+        return (Date.now() - this.roundStartTime)/1000;
     }
 
 }
