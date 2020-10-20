@@ -9,7 +9,7 @@ export const CONSTANTS = {
     HORIZENTAL_SPEED: 1,
     MAX_SPEED: 5,
     // MAX_SPEED: 4,
-    EDGE: 10,
+    EDGE: 14,
     BOARDER_WIDTH : 0
 }
 
@@ -71,7 +71,7 @@ export const LEVELS = {
         [0,0,0,1,0,0,1,0,0,0],
         [0,0,2,1,0,1,0,0,2,0],
         [0,1,0,1,0,1,0,0,1,0],
-        [0,1,1,1,0,1,1,1,1,0]
+        [0,1,1,1,0,1,1,1,0,0]
     ],
     3: [
         [0,1,0,1,0,3,0,0,2,0],
@@ -84,7 +84,7 @@ export const LEVELS = {
         [0,0,0,1,0,1,0,1,2,0],
         [0,0,2,3,0,1,0,1,0,0],
         [0,1,0,1,0,1,0,1,3,0],
-        [0,1,0,1,0,1,0,1,3,0]
+        [0,1,0,1,0,1,0,1,0,0]
     ]
 }
 
@@ -92,9 +92,8 @@ export const LEVELS = {
 export const levelInstruction = {
     0: "Have Fun!",
     1: "Level up. Great Job!",
-    2: "Level up. Be ware of the bomb!",
-    3: "Level Up. Getting Harder!",
-    4: "Level Up. Good luck, chanllenger!"
+    2: "Level up. Be ware of the bombs!",
+    3: "Final stage! Good luck, chanllenger!"
 }
 
 export const colors = {
@@ -130,12 +129,14 @@ export const _overlap = (rect1, rect2) => {
 
 export const myCount = (arr, target) => {
     return arr.filter(el => el === target).length
-}
+} 
 
 let fetchScores = firebase.database().ref('scores').orderByChild('score').limitToFirst(5)
+
 export const scores = []
  
 fetchScores.on('child_added', snapshot => {
+    // debugger
     scores.push(snapshot.val())
     let highScoreDiv = document.getElementById('high-scores')
     highScoreDiv.innerHTML = ""

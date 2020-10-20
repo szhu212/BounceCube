@@ -21,14 +21,15 @@ export default class Player {
     }
 
     updatePlayer(keysTracker) {
+        // console.log(this.level.currentLevel)
         if (keysTracker[KEYS.UP]){
-             this.velY -= 1 * CONSTANTS.UP_SPEED   
+             this.velY -= 1 * CONSTANTS.UP_SPEED 
         }
         if (keysTracker[KEYS.LEFT]) {  
             this.velX -= CONSTANTS.HORIZENTAL_SPEED 
         }
         if (keysTracker[KEYS.RIGHT]){         
-            this.velX +=  CONSTANTS.HORIZENTAL_SPEED
+            this.velX +=  CONSTANTS.HORIZENTAL_SPEED 
         }
         this.velX *= CONSTANTS.FRICTION  
         if(this.y < 390){
@@ -39,11 +40,11 @@ export default class Player {
         } else {
             this.velY += CONSTANTS.AIR_FRICTION
         }   
-        if(Math.abs(this.velX) > CONSTANTS.MAX_SPEED){
+        if(Math.abs(this.velX) > CONSTANTS.MAX_SPEED ){
                 if(this.velX > 0) {
-                    this.velX = CONSTANTS.MAX_SPEED
+                    this.velX = CONSTANTS.MAX_SPEED 
                 } else {
-                    this.velX = - 1 * CONSTANTS.MAX_SPEED
+                    this.velX = - 1 * CONSTANTS.MAX_SPEED 
                 }
         }
         
@@ -59,8 +60,9 @@ export default class Player {
             this.resolveCollision()
         }
  
-        this.x += this.velX
-        this.y += this.velY
+        let levelSpeedAdj = this.level.currentLevel * 0.15 + 1
+        this.x += this.velX * levelSpeedAdj
+        this.y += this.velY * levelSpeedAdj
         if (this.x > this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH) {            this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
             this.x = this.dimensions.width - CONSTANTS.PLAYER_WIDTH - CONSTANTS.BOARDER_WIDTH
         }  else if (this.x < 0) {
